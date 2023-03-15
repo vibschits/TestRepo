@@ -1,0 +1,66 @@
+<template>
+    <div class="slds-p-around_x-large">
+    <div class="slds-grid slds-wrap">
+        
+        <div class="slds-col slds-size_1-of-1">
+            <lightning-combobox
+            name="company"
+            label="Company"
+            value={value1}
+            placeholder="Select Company"
+            options={options}
+            onchange={handleChange1} ></lightning-combobox>
+        </div>
+        <div class="slds-col slds-size_1-of-1">
+            <lightning-combobox
+            name="branch"
+            label="Branch"
+            value={value2}
+            placeholder="Select Branch"
+            options={options2}
+            onchange={handleChange2}
+            disabled={isCompanyFilled} ></lightning-combobox>
+        </div>
+        <!--template if:true={currencyValues.data}>
+            <div class="slds-col slds-size_1-of-1">
+                <lightning-combobox
+                name="Currency"
+                label="Currency"
+                value={selectedCurrency}
+                placeholder="Select Currency"
+                options={currencyValues.data.values}
+                onchange={handleCurrencyChange} ></lightning-combobox>
+            </div>  
+        </template-->
+        <template if:true={lstOptions.length}>
+            <div class="slds-col slds-size_1-of-1">
+                <lightning-dual-listbox name="Division"
+                                        label="Select Division"
+                                        source-label="Available"
+                                        selected-label="Chosen"
+                                        field-level-help="Select one or multiple division"
+                                        options={lstOptions}
+                                        onchange={handleDivision}>
+                </lightning-dual-listbox>
+            </div>
+        </template>
+    
+    </div>
+    
+    <div class="slds-p-top_medium">
+        
+        <div class="slds-align_absolute-center" style="height:3rem">
+            <div class="slds-p-top_medium">
+                <lightning-button
+                        variant="brand"
+                        label="Create Record"
+                        class="slds-m-top_medium"
+                        disabled={isBothFilled}
+                        onclick={handleSave}
+                    >
+                </lightning-button>
+            </div>
+        </div>
+    </div>
+    </div>
+</template>

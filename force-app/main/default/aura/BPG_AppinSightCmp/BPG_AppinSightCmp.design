@@ -1,0 +1,7 @@
+<design:component>
+
+<design:attribute name="InstrumentationKey" label="Sandbox Instrumentation Key" description="Production Instrumentation Key required for appInsight call"/>
+<design:attribute name="InstrumentationKey_prod" label="Production Instrumentation Key" description="Production Instrumentation Key required for appInsight call"/>
+<design:attribute name="NameSpace" label="Project Name" description="Project Name"/>
+<design:attribute name="pagename" label="Page Name" description="Lightning Page Name"/>
+</design:component>

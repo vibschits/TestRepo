@@ -1,0 +1,2 @@
+<apex:page standardController="Installation_line_Items__c" extensions="CreateInstallationLinesDismController" recordSetVar="invs" action="{!DismantleController}">>
+</apex:page>

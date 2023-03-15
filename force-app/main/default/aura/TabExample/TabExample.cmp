@@ -1,0 +1,36 @@
+<aura:component controller="SampleAuraController" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" 
+                access="global">
+        <aura:handler name="change" value="{!v.selectRecordId2}" action="{!c.onPicklistChange}"/>
+    <aura:attribute name="selectRecordId2" type="String"/>
+    <aura:attribute name="selectRecordName2" type="String"/>
+    <aura:attribute name="UserList" type="List" default="[]" description="Genre Picklist Values"/>
+    <aura:attribute name="selectedUserList" type="List" default="[]" description="Selected Genre Picklist Values"/>
+	<lightning:tabset aura:id="tabs" selectedTabId="two">
+        <lightning:tab label="Item One" id="one">
+           <c:DualListBoxSmartSearch objectName="Group" fieldName="Name" Label="Group name" 
+                             selectRecordId="{!v.selectRecordId2}" selectRecordName="{!v.selectRecordName2}" 
+                             required="false" iconName="action:group_loading"/>
+
+ 
+
+    <div class="slds-m-around_xx-large">
+        <lightning:dualListbox aura:id="selectGenre"
+                               name="Genre"
+                               label="Select User"
+                               sourceLabel="Available User"
+                               selectedLabel="Selected User"
+                               options="{!v.UserList }"
+                               value="{!v.selectedUserList}"
+                               onchange="{!c.handleUserChange}"/>
+        
+        <lightning:button variant="brand" label="Get Selected User" onclick="{!c.getSelectedGenre}" />
+    </div>
+    
+   
+        </lightning:tab>
+        <lightning:tab label="Item Two" id="two">
+            
+        </lightning:tab>
+       
+    </lightning:tabset>
+</aura:component>

@@ -1,0 +1,27 @@
+<!--
+  @Component Name     : BPG_AppInsightCmp.cmp
+  @Description        : Send SF data to PowerBI tool
+  @Author             : Rahul Chitkara (rahul.chitkara@bp.com)
+  @Group              : BPG
+  @Last Modified By   : Rahul Chitkara (rahul.chitkara@bp.com)
+  @Last Modified On   : 21.04.2020
+  @Modification Log   : 
+  ==============================================================================
+  Ver         Date                     Author      		      Modification
+  ==============================================================================
+  1.0    21.04.2020,    Rahul Chitkara (rahul.chitkara@bp.com)     Initial Version
+-->
+
+<aura:component implements="flexipage:availableForAllPageTypes"
+                access="global" controller="BPG_appInsightControlller">
+    <aura:attribute name="InstrumentationKey" type="String"/>
+    <aura:attribute name="InstrumentationKey_prod" type="String"/>
+    <aura:attribute name="NameSpace" type="String"/>
+    <aura:attribute name="pagename" type="String"/>
+    <aura:attribute name="message" type="String"/>
+    <aura:attribute name="vfHost" type="String" />
+
+    <!-- The Visualforce page to send data to -->
+    <!-- <iframe aura:id="vfFrame" src="{!'https://' + v.vfHost + '/apex/BPG_appInsightPage'}" onload="{!c.sendToVF}" width="1" height="1"/>-->  
+   <iframe aura:id="vfFrame" src='/apex/BPG_appInsightPage' onload="{!c.sendToVF}" width="1" height="1"/> 
+</aura:component>

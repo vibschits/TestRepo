@@ -1,0 +1,333 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" controller="CreateOfferLineController">
+    <!-- Attributes -->
+    <aura:attribute name="isButtonActive" type="Boolean" default="false" />
+    <aura:attribute name="isLoad" type="Boolean" default="false" />
+    <aura:attribute name="l2values" type="string" />
+    <aura:attribute name="records" type="List" /> 
+    <aura:attribute name="headers" type="List" />
+    <aura:attribute name="headersName" type="List" />
+    <aura:attribute name="searchKeyword" type="String" />
+    <aura:attribute name="selectKeyword" type="List" />
+    <aura:attribute name="picksel" type="string" />
+    <aura:attribute name="offCurrency" type="String" />
+    <aura:attribute name="partId" type="String" />
+    <aura:attribute name="sOrgId" type="String" />
+    <aura:attribute name="wos" type="Boolean" />
+    <aura:attribute name="recordspartlist" type="List" />
+    <!-- <aura:attribute name="selectedProductType" type="String" />-->
+    <aura:attribute name="fullSet" type="Boolean" default="false" />
+    <aura:attribute name="fullSetQuantity" type="Integer" default="0" />
+    <aura:attribute name="BTPMap" type="Map" />
+    <aura:attribute name="derivedSOfactor" type="Map" />
+    
+    <aura:attribute name="unlockOffer" type="Boolean" default="false" />
+    
+    <aura:attribute name="L3ProductQty" type="Map" />
+    <aura:attribute name="L2ProductMap" type="Map" />
+    <aura:attribute name="updateL2ProductMap" type="Map" />
+    <aura:attribute name="marginAllVal" type="Integer" />
+    <aura:attribute name="discountAllVal" type="Integer" />
+    <aura:attribute name="allMarginDisc" type="Boolean" default="true" />
+    <aura:attribute name="totalBTPPrice" type="Decimal" default="0.00" />
+    <aura:attribute name="totalSalesPrice" type="Decimal" default="0.00" />
+    <aura:attribute name="totalSalesPer" type="Decimal" default="0.00" />
+    <aura:attribute name="showConfirmDialog" type="boolean" default="false" />
+    <aura:attribute name="searchTable" type="Boolean" default="true" />
+    <aura:attribute name="partlistnumber" type="Boolean" default="true" />
+    <aura:attribute name="isTOPScreen" type="String" />
+    
+    <aura:attribute name="isUpdate" type="Boolean" default="false" />
+    
+    <!-- Spinner -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <!--<aura:handler event="aura:waiting" action="{!c.showSpinner}" />
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}" /> -->
+    
+    <div class="exampleHolder">
+        <lightning:spinner aura:id="mySpinner" class="slds-hide" />
+    </div>
+    
+    <aura:html tag="style">
+        .slds-modal__container{
+        max-width: 100rem !important;
+        width:100% !important;
+        height:100%;
+        max-height:100rem !important;
+        
+        }
+    
+    </aura:html>
+
+    <!-- Part List -->
+    <!-- SK - 221122 : Sort Defining Attributes  -->
+    <aura:attribute name="sortBy" type="string" default="" />
+    <aura:attribute name="sortOrder" type="string" default="asc" />
+
+    <div class="slds-scrollable">
+        <div class="modal-header slds-modal__header slds-size_1-of-1">
+        <h4 class="title slds-text-heading–medium">Offer Products</h4>
+    </div>
+    <h2 id="element-with-table-label" class="slds-text-heading_medium slds-m-bottom_xx-small">Search Product by Part
+        List or Product Type</h2>
+    
+    <div class="slds-grid slds-gutters">
+        <div class="slds-col slds-size_1-of-4">
+            <aura:if isTrue="{!v.partlistnumber}">
+                <lightning:input value="{!v.searchKeyword}" required="false" placeholder="Search Part List ...."
+                                 aura:id="searchField" label="PartLists" />
+                <aura:set attribute="else">
+                    <lightning:recordViewForm recordId="{!v.recordId}" objectApiName="Quote">
+                        <lightning:outputField fieldName="Part_List__c" />
+                    </lightning:recordViewForm>
+                </aura:set>
+            </aura:if>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+            <lightning:select aura:id="PicklistId" label="Product Type" name="status" value="{!v.picksel}"
+                              onchange="{!c.search}">
+                <option value="" text="ALL" />
+                <option value="Hardware" text="Hardware" />
+                <option value="Non-Hardware" text="Non-Hardware" />
+
+             <!-- <aura:iteration items="{!v.selectKeyword}" var="record" indexVar="index">
+                    <option value="{!record.selected}" text="{!record.value}" selected="{!record.selected}" />
+                </aura:iteration>-->
+            </lightning:select>
+        </div>
+        <div class="slds-col slds-size_1-of-4" style="margin:20px">
+            <lightning:button onclick="{!c.search}" variant="brand" label="search" iconName="utility:search" />
+        </div>
+        <div class="slds-col slds-size_1-of-4" style="margin:20px">
+            <lightning:recordViewForm recordId="{!v.recordId}" objectApiName="Quote">
+                <lightning:outputField fieldName="CurrencyIsoCode" />
+            </lightning:recordViewForm>
+        </div>
+        
+    </div>
+    
+    <table style="width:100%;table-layout:fixed;">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered" style="overflow-x: auto;">
+            <th style="background-color:  #D6DBDF">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col" style="width: 3px;">
+                        <span></span>
+                    </div>
+                    <div class="slds-align_absolute-center ;slds-col" style="column-gap: 40px; width: 500px;">
+                        <lightning:input type="checkbox" name="progress" value="{!v.fullSet}" checked="{!v.fullSet}"
+                                         aura:id="fullSet" label="Full Set" onchange="{!c.onFullSetCheckBox}" />
+                        Qty:<input aura:id="input" type="text" style="width: 25px;" value="{!v.fullSetQuantity}"
+                                   label="Quantity" onchange="{!c.onCheckFullSet}" disabled="{! !(v.fullSet)}" />
+                    </div>
+                    <div class="slds-col;slds-align_left" style="width: 550px; column-gap: 40px;">
+                        <span>
+                            Total BTP Price : <b> {!v.totalBTPPrice}</b>
+                        </span>
+                        <span class="slds-p-left_large">
+                            Total Sales Price : <b>{!v.totalSalesPrice}</b>
+                        </span>
+                        <span class="slds-p-left_large">
+                            Overall Sales %ge : <b>{!v.totalSalesPer}</b>
+                        </span>
+                    </div>
+                </div>
+            </th>
+        </table>
+        
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+            
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Serial No">S.No</div>
+                    </th>
+                    <th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Product Name"><span>Product Name</span>
+                            <!-- SK - 221122 : Sort Setting the Lightning Button to perform Sort  -->
+                         <span><!--<lightning:buttonIcon iconName="utility:arrowup" size="small" variant="bare" onclick="{!c.handleSorting}" alternativeText="Order" aura:id="Sort" name="pNameSort" class="btn-sort" />--></span></div>
+                    </th>
+
+                    <th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Product Description">Product Description</div>
+                    </th>
+                    <aura:iteration items="{!v.headers}" var="header" indexVar="index">
+                        <th class="" scope="col" style="background-color:  #D6DBDF">
+                            <div class="slds-align_absolute-center; slds-truncate">
+                                <ui:inputCheckbox aura:id="checkbox" label="{!header.Name}"
+                                                  value="{!header.isSelected}" change="{!c.onClickHandleChange}" />
+                            </div>
+                            <div class=" slds-align_absolute-center; slds-truncate">
+                                Qty:<input aura:id="input" type="text" style="width: 25px;" data-index="{!index}"
+                                           data-header="{!header.Name}" disabled="{! OR(NOT(header.isSelected), v.fullSet)}"
+                                           value="{!header.value}" onchange="{!c.handleOnChange}" />
+                            </div>
+                        </th>
+                    </aura:iteration>
+                    <th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Total">Total</div>
+                    </th>
+                    <!--th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Level-2 Custom Quantity">L2  Qty</div>
+                    </th-->
+                    <th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Custom Quantity">Cstm Qty</div>
+                    </th>
+                    <!--th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Custom Quantity">L2 btp</div>
+                    </th-->
+                    <!--th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Custom Quantity">Cstm BTP</div>
+                    </th-->
+                    <th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="BTP">BTP</div>
+                    </th>
+                    <th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Margin" style=" margin-top: -5px;margin-bottom: -15px;">
+                            Margin (%)</div>
+                        <lightning:input type="Number" value="{!v.marginAllVal}" name="allmargin"
+                                         disabled="false" onchange="{!c.onChangeMarginAll}" />
+                    </th>
+                    <!--th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Margin" style=" margin-top: -5px;margin-bottom: -15px;">
+                            Discount %</div>
+                        <lightning:input type="Number" value="{!v.discountAllVal}" name="alldiscount"
+                                         disabled="{!v.allMarginDisc}" onchange="{!c.onChangeDiscountAll}" />
+                    </th-->
+                    <th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="My Sell Price">My Sales Price</div>
+                    </th>
+                    <th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Last Sale Price">Last Sale Price</div>
+                    </th>
+                    <th class="" scope="col" style="background-color:  #D6DBDF">
+                        <div class="slds-truncate" title="Last SO Date">Last SO Date</div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.records}" var="record" indexVar="index">
+                    <tr class="slds-hint-parent">
+                        <th data-label="Serial No" scope="row">
+                            <div class="slds-row-number slds-text-body_small slds-text-color_weak"
+                                 title="Serial No"> </div>
+                        </th>
+                        <td data-label="Product Name">
+                            <div class="slds-truncate" title="Product Name">{!record.Product_L3__r.Name}</div>
+                        </td>
+                        <td data-label="Product Description">
+                            <div class="slds-truncate" title="Product Description">
+                                {!record.Product_L3__r.Description}</div>
+                        </td>
+                        <aura:iteration items="{!record.product2Quantities}" var="item">
+                            <td data-label="l2 Products headers">
+                                <aura:unescapedHtml value="{!item}"></aura:unescapedHtml>
+                            </td>
+                        </aura:iteration>
+                        <td data-label="Total">
+                           <!-- <div class="slds-truncate" title="20%">{!record.productquantities}</div>-->
+                           <div class="slds-truncate" >{!record.level2customQuantity}</div>
+                        </td>
+                        <!--td data-label="L2 custom Quantity">
+                            <div class="slds-truncate">{!record.level2customQuantity}</div>
+                        </td-->
+                        <td data-label="Custom Quantity">
+                            <div class="slds-truncate" title="custom quantity"
+                                 style=" margin-top: -20px; margin-bottom: -3px;" data-index="{!index}">
+                                <lightning:input type="Number" name="cusQty" value="{!record.customQuantity}"
+                                                 onchange="{!c.onChange}" />
+                            </div>
+                        </td>
+                        <!-- test-->
+                        <!--td data-label="BTP">
+                            <div class="slds-truncate" title="20%">{!record.L2btpPrice}</div>
+                        </td>
+                        <td data-label="BTP">
+                            <div class="slds-truncate" title="20%">{!record.cusBtpPrice}</div>
+                        </td-->
+                        <!---->
+                        <td data-label="BTP">
+                            <div class="slds-truncate" title="20%">
+                                <div> {!record.btpPrice}
+                                    <aura:if isTrue="{!not(empty(record.error))}">
+                                        <lightning:helptext content="{!record.error}" iconName="utility:warning"
+                                                            iconVariant="error" title="error" />
+                                    </aura:if>
+                                    <!--<div style="color:red;">{!record.error}</div> -->
+                                </div>
+                            </div>
+                        </td>
+                        <td data-label="Margin">
+                            <div class="slds-truncate" data-index="{!index}"
+                                 style=" margin-top: -20px; margin-bottom: -3px;">
+                                <lightning:input type="Number" name="marginprice" value="{!record.margin}"
+                                                 disabled="{!record.inputDisable}" onchange="{!c.onChangeMargin}" />
+                            </div>
+                        </td>
+                        <!--td data-label="Discount"> 
+                            <div class="slds-truncate" data-index="{!index}"
+                                 style=" margin-top: -20px; margin-bottom: -3px;">
+                                <lightning:input type="Number" name="marginprice" value="{!record.discount}"
+                                                 disabled="{!record.inputDisable}" onchange="{!c.onChangeDiscount}" />
+                            </div>
+                        </td-->
+                        <td data-label="My Sell Price">
+                            <div class="slds-truncate">{!record.mySalesPrice}</div>
+                        </td>
+                        <td data-label="Last Sales Price">
+                            <div class="slds-truncate" aura:id="Salesprice">{!record.SAP_Price}</div>
+                        </td>
+                        <td data-label="Last SO Date">
+                            <div class="slds-truncate" aura:id="Salesprice">{!record.SAP_Date}</div>
+                        </td>
+                    </tr>
+                    
+                </aura:iteration>
+            </tbody>
+        </table>
+        <br />
+        <br />
+    </table>
+    
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        <lightning:button variant="brand" label="Update Offer" title="Brand action" onclick="{!c.validate}" />
+        <lightning:button variant="Neutral" class="slds-button" label="Cancel" onclick="{!c.handleExit}" />
+    </div>
+    
+    
+    <div class="slds-m-around_xx-large">
+        
+        <aura:if isTrue="{!v.showConfirmDialog}">
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container" style="width:50% !important;">
+                    <!--Modal Box Header Start-->
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading--medium">Confirmation</h1>
+                    </header>
+                    <!--Modal Box Header End-->
+                    
+                    <!--Modal Box Content Start-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <center><b>
+                            There are line items in this offer which will be sent for Underquote/Delivery SLA approval when you Finalize this offer.
+                            </b></center>
+                    </div>
+                    <!--Modal Box Content End-->
+                    
+                    <!--Modal Box Button Start-->
+                    <footer class="slds-modal__footer">
+                        <!--<lightning:button name='No' label='No' onclick='{!c.handleConfirmDialogNo}' /> -->
+                        <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.offerLinesave}' />
+                    </footer>
+                    <!--Modal Box Button End-->
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>
+        </aura:if>
+    </div>
+    <aura:if isTrue="{!v.isLoad}">
+         <lightning:spinner class="spins" alternativeText="Loading" size="medium" variant="brand" />
+    </aura:if>
+    </div>
+    
+</aura:component>

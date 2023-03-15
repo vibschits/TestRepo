@@ -1,0 +1,10 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" 
+                access="global" >
+  <aura:attribute name="selectRecordId2" type="String"/>
+    <aura:attribute name="selectRecordName2" type="String"/>
+	<c:SmartSearchRC objectName="Account" fieldName="Name" Label="Account name" 
+                             selectRecordId="{!v.selectRecordId2}" selectRecordName="{!v.selectRecordName2}" 
+                             required="false" iconName="action:new_account"/>
+    <p>Selected Record Id: {!v.selectRecordId2}</p> 
+               <p>Selected Record Name: {!v.selectRecordName2}</p>
+</aura:component>

@@ -1,0 +1,20 @@
+<apex:page standardController="Invoice__c" extensions="CreateCommercialInvoiceController" recordSetVar="invs" action="{!CreateCommercialRecord}">
+    <apex:form id="frm1">
+    <apex:pageBlock >
+        <apex:pageMessages id="showmsg"></apex:pageMessages>
+        
+        <apex:outputPanel rendered="{!isSuccess}">
+            <script type='text/javascript'>
+            window.location.href = "/lightning/r/Invoice__c/"+"{!commercialInvUrl}"+"/view";
+            </script>            
+        </apex:outputPanel>
+        
+        <!--<apex:outputPanel rendered="{!displayToast}">
+            <a href="{!$Site.BaseUrl}/{!commercialInvUrl}" target="_blank">Click to go to new Commercial Record</a><br/>
+        </apex:outputPanel>-->
+        <apex:outputPanel rendered="{!isError}">
+            <a href="/lightning/o/Invoice__c/list" target="_self">Go back to List View</a><br/>
+        </apex:outputPanel>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

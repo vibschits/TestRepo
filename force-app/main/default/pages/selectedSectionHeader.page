@@ -1,0 +1,90 @@
+<apex:page standardController="quote" extensions="selectedSectionHeaderController"  
+           showHeader="false" 
+           sidebar="false" 
+           applyBodyTag="false" 
+           applyHtmlTag="false" standardStylesheets="true" >
+    <style>
+        .locationError { color: blue; font-weight: strong;}
+        .employeeError { color: green; font-weight: strong;}
+    </style>
+    <center>
+        <apex:form style="width:500px; margin-top:100px">
+            <apex:outputPanel rendered="{!if(quote.Offer_Template__c != '',true,false)}">
+                <apex:pageBlock title="Select Content" >
+                    <!--apex:pageBlockButtons location="top" >
+                            <apex:commandButton value="Select All"   action="{!selectAllHandler}"/>
+                            </apex:pageBlockButtons-->
+                    <apex:pageBlockSection columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:commandButton value="Select All"   action="{!selectAllHandler}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!CoverletterChecked}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CoverLetter
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!IntroductionLetter}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Introduction Letter
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!AboutTega}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;About Tega
+                        </apex:pageBlockSectionItem> 
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!OperatingParamaters}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Operating Parameters
+                        </apex:pageBlockSectionItem>
+                        <!--rendered="{!quote.Recordtype.name == 'Offer Non-Spare'}"-->
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!ScopeOfSupply}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scope Of Supply
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!TechnicalSpecification}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Technical Specification
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!Selection}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Selection
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!Drawing}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drawing
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!Simulations}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Simulations
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!Presentation}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Presentation
+                        </apex:pageBlockSectionItem>
+                        <!-- rendered="{!quote.Recordtype.name == 'Offer'}"-->
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!priceSchedule}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Price Schedule
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!Annexure1}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Annexure 1
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!Annexure2}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Annexure 2
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!Annexure3}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Annexure 3
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!termsandConditions}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Terms and Condition
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:inputCheckbox value="{!generalTermsandcondition}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;General Terms  and Condition
+                        </apex:pageBlockSectionItem>
+                        
+                    </apex:pageBlockSection> 
+                    <apex:pageBlockButtons location="bottom" >
+                        <apex:commandButton value="Generate Document"   action="{!save}"/>
+                        <apex:commandButton value="Close"   action="{!cancel}"/>
+                        
+                    </apex:pageBlockButtons>
+                </apex:pageBlock>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!if(quote.Offer_Template__c == '',true,false)}">
+                <apex:pageBlock > 
+                    <p><apex:outputText id="Offertempalte"></apex:outputText> 
+                        (Please fill the offer Template and Come Back) </p>
+                    <apex:message for="Offertempalte" styleClass="locationError" /> <p /> 
+                    <apex:commandButton value="Close"   action="{!cancel}"/>
+                </apex:pageBlock>   
+            </apex:outputPanel> 
+        </apex:form>
+    </center>
+</apex:page>

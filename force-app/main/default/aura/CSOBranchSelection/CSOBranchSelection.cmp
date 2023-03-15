@@ -1,0 +1,5 @@
+<aura:component implements="force:appHostable,flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride" access="global" >
+    <div class="stylecode">
+    	<c:cSO_Branch_Selection recordId="{!v.recordId}" isEditBtnClicked="Y"></c:cSO_Branch_Selection>
+    </div>   
+</aura:component>

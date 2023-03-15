@@ -1,0 +1,6 @@
+<aura:component implements="force:appHostable,flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride" access="global" >
+    <div class="stylecode">
+        test
+    	<c:cSO_Insert recordId="{!v.recordId}"></c:cSO_Insert>
+    </div>   
+</aura:component>

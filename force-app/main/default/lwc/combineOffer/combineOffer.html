@@ -1,0 +1,65 @@
+<template>
+    <lightning-card>
+        <h3 slot="title">
+            <lightning-icon icon-name="standard:branch_merge" size="medium"></lightning-icon>
+           Combine Offer
+        </h3>
+       <!-- <div slot="actions">
+            <lightning-radio-group name="radioGroup" slot="actions" options={options} value={value} type="button" onchange={handleChange} ></lightning-radio-group>
+        </div> -->
+
+        <lightning-layout horizontal-align="center" if:true={isOffer}>
+            <lightning-layout-item size="12" >
+                <table class="slds-table slds-no-row-hover slds-table_bordered">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Offer Number</th>
+                            <th>Offer Name</th>
+														<th>Offer Type</th>
+                            <th>Status</th>
+                            <th>Offer Date</th>
+                            <th>Offer Validity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={offerList} for:item="ofr" for:index="index">
+                            <tr key={ofr.Id} disabled={ofr.isDisable} >
+                                <td style="padding: 1.4%;">                                    
+                                    <lightning-input type="checkbox" disabled={ofr.isDisable} 
+                                                        value={ofr.selected}
+                                                        onchange={onCheckHandler}
+                                                        data-id={index}>
+                                                    </lightning-input>
+                                </td>
+                                <td> {ofr.offer.QuoteNumber}</td>
+                                <td> {ofr.offer.Name}</td>
+																<td> {ofr.offer.RecordType.Name}</td>
+                                <td> {ofr.offer.Approval_Status__c}</td>
+                                <td> {ofr.offer.Quotation_Date__c}</td>
+                                <td> {ofr.offer.Quotation_Validity__c}</td>
+                                
+                            </tr>
+                        </template>
+                    </tbody>
+                    </table>
+            </lightning-layout-item>
+        </lightning-layout>
+
+        <lightning-layout horizontal-align="center" if:false={isOffer}>
+            <lightning-layout-item size="6">
+                <lightning-icon size="xx-small" icon-name="action:info" alternative-text="onfo" title="info"></lightning-icon>
+                No records are available for combine !
+            </lightning-layout-item>
+        </lightning-layout>
+        
+        <p slot="footer" if:true={isOffer}>
+            <lightning-button variant="brand" label="Combine Offer" onclick={SaveCombineOfr}></lightning-button>
+            <lightning-button label="Cancel" onclick={closeAction}></lightning-button>
+        </p>
+        <template if:true={isLoad}>
+            <lightning-spinner variant="brand" size="large" alternative-text="Loading"></lightning-spinner>
+        </template>
+        
+    </lightning-card>
+</template>

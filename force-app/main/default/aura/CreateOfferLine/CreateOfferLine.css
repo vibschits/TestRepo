@@ -1,0 +1,26 @@
+.THIS.slds-modal__container {
+    max-width: 80rem !important;
+    width:80% !important;
+}
+.THIS.slds-spinner_container {  
+    z-index: 10000;
+    position: fixed;   
+}
+.THIS.spins::after {
+    position: absolute;
+    content: 'Please wait while loading...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+}
+
+.THIS .btn-sort:focus{
+    box-shadow: none !important;
+}
+.THIS .sort-btn{
+    transform: rotate(180deg) !important;
+}
+.THIS .selected-btn{
+    color: #005fb2 !important;
+}

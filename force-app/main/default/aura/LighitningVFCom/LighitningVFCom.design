@@ -1,0 +1,4 @@
+<design:component>
+<design:attribute name="InstrumentationKey" label="Instrumentation Key" description="Instrumentation Key required for appInsight call"/>
+<design:attribute name="NameSpace" label="Project Name" description="Project Name"/>
+</design:component>

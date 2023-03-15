@@ -1,0 +1,15 @@
+<aura:component implements="flexipage:availableForAllPageTypes"
+                access="global">
+
+    <aura:attribute name="message" type="String"/>
+    <aura:attribute name="vfHost" type="String"
+            default="chitsvibs-dev-ed--c.ap5.visual.force.com"/>
+
+    <!-- Input field for message "data" -->
+    <lightning:input type="text" label="Message:" value="{!v.message}"/>
+    <lightning:button label="Send to VF" onclick="{!c.sendToVF}"/>
+
+    <!-- The Visualforce page to send data to -->
+    <iframe aura:id="vfFrame" src="{!'https://' + v.vfHost + '/apex/testVF'}"/>
+    
+</aura:component>

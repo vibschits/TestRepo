@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>45.0</apiVersion>
+    <label>Towermap</label>
+    <packageVersions>
+        <majorNumber>10</majorNumber>
+        <minorNumber>0</minorNumber>
+        <namespace>ca_collab_2_0</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>7</majorNumber>
+        <minorNumber>0</minorNumber>
+        <namespace>ca_only_2_0</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>7</minorNumber>
+        <namespace>sf_com_apps</namespace>
+    </packageVersions>
+</ApexComponent>

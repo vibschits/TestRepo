@@ -1,0 +1,891 @@
+<apex:Page controller="CompilePdfController"  showHeader="true"  
+           sidebar="false" standardStylesheets="false" 
+           applyBodyTag="false" applyHtmlTag="true" 
+           renderAs="PDF" contentType="Application/pdf#{fileName}.pdf" >
+    <apex:variable value="{!1}" var="count" />
+    <apex:variable value="{!1}" var="Sno" />
+    <apex:variable value="{!1}" var="Serialno" />
+    <apex:variable value="{!1}" var="index" />
+    <apex:variable value="{!1}" var="OPcount"/>
+    <apex:variable value="{!1}" var="DPcount"/>
+    <apex:variable value="{!1}" var="eqcount"/>
+    <apex:variable value="{!1}" var="Prodcount"/>
+    
+    
+    <head>
+        <style type="text/css" media="print">
+            @page {
+            @top-center {
+            content: element(header);
+            }
+            @bottom-left {
+            content: element(footer);
+            }
+            margin-top: 150px;
+            }
+            
+            div.header {
+            padding: 10px;
+            position: running(header);
+            }
+            
+            div.footer {
+            position: running(footer);
+            }
+            
+            .pagenumber:before {
+            content: counter(page);
+            }
+            
+            .pagecount:before {
+            text-align:right;
+            content: counter(pages);
+            }
+            
+            table {
+            table-layout: auto;
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid black;
+            }
+            
+            th, td {
+            padding: 5px;
+            }
+            
+            .customImage {
+            height: 100px;
+            width: 50px;
+            }
+            
+            .tsi {
+            height: 900px;
+            weidth: 500px;
+            }
+            
+            #coverImage{
+            border-image-source: {!$Resource.TegaImage1};
+            }
+        </style>
+    </head>
+    
+    <!-- SK-231122: Footer Fix-->
+   <div class="footer">
+        <hr style=" margin-bottom: 17px;"/>
+        <div style="font-size:14px;font-family:sans-serif;">
+            <div style="position: absolute;left: 0;top:0;">
+                &nbsp;Offer No: {!offer.QuoteNumber} 
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                Date:&nbsp; <apex:outputText value="{0, date,dd MMMM yyyy}">
+                <apex:param value="{!offer.createddate}" /> 
+                </apex:outputText>
+            </div>
+            <div>
+                <table>
+                    
+                </table>
+            </div>
+            <div  style="position: absolute;right: 0;top:0;" >
+                Page <span class="pagenumber"/> of <span class="pagecount"/>
+            </div>
+            <div  style="position: absolute;left: 0;top:0;">
+                <!-- SK - 241122 : Page Header confidential content disclaimer alignment fix-->
+                <table >
+                    <tr>
+                        <td style=" Vertical-align: bottom; text-align: left">
+                            <br/>
+                            <b>CONFIDENTIAL CONTENT</b> – <i>{!offerTemplate.Confidential_Content__c}</i>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- SK-241122 : Header Fix-->
+    <div class="header" style="position: top;">
+        <apex:pageBlock >
+            <apex:pageBlockTable value="{!$Resource.Solution} " var=" " width="100%">
+                <apex:column headerValue=" " style="width=50%; text-align:left; font-family: sans-serif;">
+                    <apex:outputText escape="false" value="{!offerTemplate.Tag_Line__c}" style="position: absolute;left:0;top:0;"/>
+                </apex:column>
+                <apex:column headerValue=" " style="width=50%;text-align:right;">
+                    <apex:outputText escape="false" value="{!offerTemplate.Logo__c}" style="position: absolute;right:0;top:0;"/>
+                </apex:column> 
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </div>
+    
+    <apex:outputPanel rendered="{!IF(checked == true,true,false)}">            
+        
+        
+        <!-- SK - 231122 : Logo Fix -->
+        <div style="font-family: sans-serif; font-size: 14pt;">
+            <apex:outputPanel rendered="{!offer.Recordtype.name != 'Combine'}">
+                <div style="font-size: 15px;">
+                    <br/>
+                    Product:<br/> 
+                    <div style="font-size: 20px; font-weight: bold; font-family: sans-serif">
+                        <apex:outputText value="{!TitleFromOT}"></apex:outputText> 
+                    </div>
+                </div>
+                <br/>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!offer.Recordtype.name == 'Compile'}">
+                <div>
+                    <apex:repeat value="{!compileOfferRecType}" var="compileofferlist">
+                        <div style="font-size: 15px">
+                            Product {!Prodcount}: <apex:variable value="{!Prodcount+1}" var="Prodcount" />
+                            <div style="font-size: 20px; font-weight: bold; font-family: sans-serif">
+                                <apex:outputText value="{!TitleFromOT1}"></apex:outputText> 
+                            </div>
+                        </div><br/>
+                    </apex:repeat>
+                    <apex:repeat value="{!compileoffer}" var="compileofferlist">
+                        <div style="font-size: 15px;">
+                            Equipment:<br/>
+                            <div style="font-size: 20px; font-weight: bold; font-family: sans-serif">
+                                <apex:outputField value="{!compileofferlist.Opportunity_Equipments__r.Customer_Equipment__r.Equipment_Type__c}"/>&nbsp; Ø &nbsp;
+                                <apex:outputField value="{!compileofferlist.Opportunity_Equipments__r.Customer_Equipment__r.Dia_m__c}"></apex:outputField>&nbsp;mm X &nbsp;
+                                <apex:outputField value="{!compileofferlist.Opportunity_Equipments__r.Customer_Equipment__r.Length_m__c}"></apex:outputField>&nbsp;mm<br/>
+                            </div>
+                        </div>
+                        </apex:repeat>
+                </div>
+            </apex:outputPanel>
+            
+            
+            <apex:outputPanel rendered="{!offer.Recordtype.DeveloperName == 'Offer'}">
+                <div style="font-size: 15px;">
+                    Equipment:<br/>
+                    <div style="font-size: 20px; font-weight: bold; font-family: sans-serif">
+                        <apex:outputField value="{!offer.Opportunity_Equipments__r.Customer_Equipment__r.Equipment_Type__c}"/>&nbsp; Ø &nbsp;
+                        <apex:outputField value="{!offer.Opportunity_Equipments__r.Customer_Equipment__r.Dia_m__c}"></apex:outputField>&nbsp;mm X &nbsp;
+                        <apex:outputField value="{!offer.Opportunity_Equipments__r.Customer_Equipment__r.Length_m__c}"></apex:outputField>&nbsp;mm<br/>
+                    </div>
+                </div>
+            </apex:outputPanel>
+            
+            <apex:outputPanel rendered="{!offer.Recordtype.DeveloperName == 'Offer_Non_Spare'}">
+                <div style="font-size: 15px;">
+                    Equipment:<br/>
+                    <div style="font-size: 20px; font-weight: bold; font-family: sans-serif">
+                        <apex:outputField value="{!offer.Opportunity_Equipments__r.Customer_Equipment__r.Equipment_Type__c}"/>&nbsp; Ø &nbsp;
+                        <apex:outputField value="{!offer.Opportunity_Equipments__r.Customer_Equipment__r.Dia_m__c}"></apex:outputField>&nbsp;mm X &nbsp;
+                        <apex:outputField value="{!offer.Opportunity_Equipments__r.Customer_Equipment__r.Length_m__c}"></apex:outputField>&nbsp;mm<br/>
+                    </div>
+                </div>
+            </apex:outputPanel>
+            <br/>
+            <div style="font-size: 15px;">
+                Offer Number and Date:<br/>
+                <div style="font-size: 20px; font-weight: bold; font-family: sans-serif">
+                    <apex:outputField value="{!offer.QuoteNumber}"></apex:outputField> &nbsp;&nbsp;&nbsp;&nbsp; 
+                    <apex:outputText value="{0, date,dd MMMM yyyy}">
+                        <apex:param value="{!offer.createddate}" /> 
+                    </apex:outputText>
+                </div>
+            </div>
+            <br/>
+            <div style="font-size: 15px;">
+                Presented By:<br/>
+                <div style="font-size: 14px; font-weight: bold; font-family: sans-serif">
+                    <apex:outputText value="TEGA INDUSTRIES LIMITED" /><br/> 
+                </div>
+                <div style="font-size: 15px;">
+                    <apex:outputText value="147, Block - G," /><br/>
+                    <apex:outputText value="New Alipore, " /><br/>
+                    <apex:outputText value="Kolkata, India - 700053" /><br/>
+                </div>
+                
+            </div>
+            <br/>
+            <div style="font-size: 15px;">
+                Presented To:<br/> 
+                <div style="font-size: 14px; font-weight: bold; font-family: sans-serif">
+                    <apex:outputField value="{!offer.Account.Name}"/> <br/>  
+                </div>
+                <apex:outputField value="{!offer.Account.BillingCity}"/><br/>
+                <apex:outputField value="{!offer.Account.Billingcountry}"/>&nbsp;
+                <apex:outputField value="{!offer.Account.BillingpostalCode}"/><br/>
+                <apex:outputField value="{!offer.Account.Billingstate}"/>&nbsp;
+                <apex:outputField value="{!offer.Account.Billingstreet}"/><br/><br/><br/>
+                <!--img src="{!$Resource.TegaImage1}" width="800" height="300" /-->
+            </div>
+            <br/><br/>
+        </div>
+        <div style="page-break-after: always"></div>
+    </apex:outputPanel> 
+    
+    <!-- SK-241122: Introduction Letter -->
+    <apex:outputPanel rendered="{!IF(IntroductionChecked == true, true, false)}">
+        <div style="font-size:14px;font-family:sans-serif;">
+            <div>
+                <br/><br/>
+            </div>
+            <h2>
+                INTRODUCTION LETTER
+            </h2><br/><br/>
+            To,<br/>
+            {!offer.Account.Name}<br/>
+            <apex:outputField value="{!offer.Account.BillingCity}"/><br/>
+            <apex:outputField value="{!offer.Account.Billingcountry}"/><br/>
+            <apex:outputField value="{!offer.Account.BillingpostalCode}"/><br/>
+            <apex:outputField value="{!offer.Account.Billingstate}"/><br/>
+            <apex:outputField value="{!offer.Account.Billingstreet}"/><br/><br/><br/>
+            Kind attention:  {!offer.Contact.name}<br/><br/>
+            Subject: {!TitleFromOT} <br/><br/>
+            Dear Client,<br/><br/>
+            With reference to the above we are pleased to enclose our offer&nbsp;{!offer.QuoteNumber} dated of&nbsp; <apex:outputText value="{0, date,dd MMMM yyyy}">
+            <apex:param value="{!offer.createddate}" /> 
+            </apex:outputText> for your kind consideration.<br/><br/>
+            We trust, you will find our offer in line with your requirements and now look forward for your valued order soon.<br/><br/>
+            However, in case you need any further information/clarification, we shall be glad to be of any assistance to you.<br/><br/>
+            Thanking you and assuring you of our best services always, we remain. <br/> <br/>
+            Regards,<br/> <br/>
+            <b>{!offer.Opportunity.Owner.Name}</b><br/>
+            Tega Industries Limited<br/>
+            {!u.Designation__c}
+            
+        </div>
+        <div style="page-break-after: always"></div>
+    </apex:outputPanel>
+    
+    
+    <apex:outputPanel rendered="{!IF(AboutTegaChecked == TRUE, true, false)}">
+        <div  style="font-size:14px;font-family:sans-serif;">
+            
+            <!-- SK 241122 : Justify About Tega Fix -->
+            <div  style="font-size:14px;font-family:sans-serif;">
+                
+                <h2>
+                    About Tega
+                </h2>
+            </div>
+            <div>
+                <apex:outputText escape="false" value="{!offer.Offer_Template__r.About_Tega__c}"></apex:outputText>
+            </div>
+            
+        </div>
+        <div style="page-break-after: always"></div>
+        
+        <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+            <div >
+                <table>
+                    
+                    <tr>
+                        <td>
+                            <h2>
+                                ABOUT THE PRODUCT
+                            </h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <apex:outputText escape="false" value="{!offer.Offer_Template__r.Tega_Image_Logo__c}" ></apex:outputText>
+                        </td>
+                    </tr>
+                    
+                </table>
+                
+            </div>
+        </div>
+        <div style="page-break-after: always"></div>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!IF(OperatingParamatersChecked == TRUE, true, false) && (NOT(OPcount >= 1))}">
+        <div  style="font-size:14px;font-family:sans-serif;">
+            
+            <h2>
+                OPERATING PARAMETERS
+            </h2>
+            Our operating of liner system is based on the following operating parameters<br/>
+            <table>
+                <div style="width:48%; float:left">
+                    <h3>
+                        Operating Parameter Labels 
+                    </h3> 
+                </div>
+                <div style="width:48%; float:right">
+                    <h3>
+                        Operating Parameter values  
+                    </h3> 
+                </div>
+            </table><br/><br/><br/>
+            <apex:repeat value="{!fieldlablemap}" var="FieldLable">
+                <div>
+                    <b>Operating Parameter :{!OPcount}</b> <apex:variable value="{!OPcount+1}" var="OPcount" /> 
+                </div>
+                <div style="margin-top:10px;">
+                    <apex:repeat value="{!fieldlablemap[FieldLable]}" var="varl">
+                        <div style="margin-top:30px;">
+                            <div style="width:48%; float:left">
+                                <apex:outputText escape="false">{!varl}</apex:outputText>
+                            </div>
+                            <div style="width:48%; float:right">
+                                <apex:outputText escape="false" >{!fieldlablemap[FieldLable][varl]}</apex:outputText>
+                            </div>
+                        </div>
+                    </apex:repeat>
+                </div>
+                <div style="page-break-after: always"></div>
+            </apex:repeat>
+            <div style="page-break-after: always"></div>
+            <h2>
+                DESIGN PARAMETERS
+            </h2>
+            Our design of liner system is based on the following operating parameters:<br/>
+            
+            <table>
+                <div style="width:48%; float:left">
+                    <h3>
+                        Design Parameter Labels 
+                    </h3> 
+                </div>
+                <div style="width:48%; float:right">
+                    <h3>
+                        Design Parameter values  
+                    </h3> 
+                </div>
+            </table>
+            
+            <apex:repeat value="{!designfieldlablemap}" var="FieldLable">
+                <div>
+                    <b>Design Parameter :{!DPcount}</b> <apex:variable value="{!DPcount+1}" var="DPcount" /> 
+                </div>
+                <div style="margin-top:10px;">
+                    <apex:repeat value="{!designfieldlablemap[FieldLable]}" var="varl">
+                        <div style="margin-top:30px;">
+                            <div style="width:48%; float:left">
+                                <apex:outputText escape="false">{!varl}</apex:outputText>
+                            </div>
+                            
+                            <div style="width:48%; float:right">
+                                <apex:outputText escape="false" >{!designfieldlablemap[FieldLable][varl]}</apex:outputText>
+                            </div>
+                        </div>
+                    </apex:repeat>
+                </div>
+                
+            </apex:repeat>
+        </div><div style="page-break-after: always"></div>
+    </apex:outputPanel>
+    
+    <apex:outputPanel rendered="{!IF(technicalSpecificationChecked == TRUE, true, false)  && (NOT(offer.Technical_Specification__c == ''))}">
+        <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+            <h2>
+                TECHNICAL SPECIFICATION
+            </h2>
+            <apex:outputText value="{!offer.Technical_Specification__c}" styleClass="customImage" escape="false" style="height:900px; width:600px"/>
+        </div>
+    </apex:outputPanel>
+    <div style="page-break-after: always"></div>
+    
+    
+    <apex:outputPanel rendered="{!IF(selectionChecked == TRUE, true, false) && (NOT(offer.Selection__c == ''))}">
+        <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+            <h2>
+                SELECTION
+            </h2>
+            <apex:outputText escape="false" value="{!offer.Selection__c}" ></apex:outputText>
+            <br/><br/>
+        </div>
+        <div style="page-break-after: always"></div>
+    </apex:outputPanel>
+    
+    
+    <apex:outputPanel rendered="{!IF(drawingChecked == TRUE, true, false) && (NOT(offer.Drawing__c == '')) }">
+        <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+            <h2>
+                DRAWING
+            </h2>
+            <apex:outputText escape="false" value="{!offer.Drawing__c}" ></apex:outputText>
+            <br/><br/>
+        </div>
+        <div style="page-break-after: always"></div>
+    </apex:outputPanel>
+    
+    <apex:outputPanel rendered="{!IF(simulationChecked == TRUE, true, false) && (NOT(offer.Simulations__c == ''))}">
+        <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+            <h2>
+                SIMULATIONS
+            </h2>
+            <apex:outputText escape="false" value="{!offer.Simulations__c}" ></apex:outputText>
+            <br/><br/>
+        </div>
+        <div style="page-break-after: always"></div>
+    </apex:outputPanel>
+    
+    <apex:outputPanel rendered="{!IF(presentationChecked == TRUE, true, false)  && (NOT(offer.Presentation__c == ''))}">
+        <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+            <h2>
+                PRESENTATION
+            </h2>
+            <apex:outputText escape="false" value="{!offer.Presentation__c}" ></apex:outputText>
+        </div>
+        <div style="page-break-after: always"></div>
+    </apex:outputPanel>
+    
+    <apex:outputPanel rendered="{!IF(priceScheduleChecked == TRUE, true, false) && (NOT(offer.Recordtype.DeveloperName == 'Offer_Non_Spare')) && (offer.Is_Partlist_Same__c == true)}">  
+        <div style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+            <h2> PRICE SCHEDULE </h2><br/>
+            <b>PartList Name: </b><apex:outPutText value="{!offer.Part_List__r.Name}"></apex:outPutText><br/><br/>
+            <table style="width:100%; align:center">
+                <thead  >
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col" style="border: 1px solid black;">
+                            <div class="slds-truncate" style="width:30px;" title="Serial No">S.No</div>
+                        </th>
+                        <th class="" scope="col" style="border: 1px solid black; text-align: center;">
+                            <div class="slds-truncate" style="width:400px;" title="Description">Description</div>
+                        </th>
+                        <th class="" scope="col" style="border: 1px solid black;text-align: center;">
+                            <div class="slds-truncate" title="qty EA">Qty EA</div>
+                        </th>
+                        <th class="" scope="col" style="border: 1px solid black; text-align: center;">
+                            <div class="slds-truncate" title="Unit price">Unit Price {!offer.CurrencyIsoCode}</div>
+                        </th>
+                        <th class="" scope="col" style="border: 1px solid black;text-align: center;">
+                            <div class="slds-truncate" title="Total Price">Total Price {!offer.CurrencyIsoCode}</div>
+                        </th>
+                    </tr>
+                    <apex:repeat value="{!L1l2offerLines}" var="l1l2line" >
+                        <tr class="slds-hint-parent" >
+                            <th data-label="Serial No" scope="row"  style="border: 1px solid black;">
+                                <div class="slds-row-number slds-text-body_small slds-text-color_weak" title="Serial No">
+                                    {!count}
+                                    <apex:variable value="{!count+1}" var="count" /> 
+                                    
+                                </div>
+                            </th>
+                            <td data-label="Product Name"  style="border: 1px solid black;text-align: right">
+                                <div class="slds-truncate" title="Description">{!l1l2line.Product_Description__c}</div>
+                            </td>
+                            <td data-label="Product Description"  style="border: 1px solid black;">
+                                <div class="slds-truncate" title="Qty EA">{!l1l2line.Quantity__c}</div>
+                            </td>
+                            <td data-label="Product Description"  style="border: 1px solid black;">
+                                <div class="slds-truncate" title="Unit Price">{!l1l2line.Unit_price__c}</div>
+                            </td>
+                            <td data-label="Product Description"  style="border: 1px solid black;">
+                                <div class="slds-truncate" title="Total Price">{!l1l2line.Amount__c}</div>  
+                            </td>
+                            
+                        </tr>
+                    </apex:repeat>
+                    <apex:repeat value="{!offerlineitems}" var="QLI" >
+                        <tr class="slds-hint-parent" >
+                            <th data-label="Serial No" scope="row"  style="border: 1px solid black;text-align: center">
+                                <div class="slds-row-number slds-text-body_small slds-text-color_weak" title="Serial No">
+                                    {!count}
+                                    <apex:variable value="{!count+1}" var="count" /> 
+                                    
+                                </div>
+                            </th>
+                            <td data-label="Product Name"  style="border: 1px solid black;text-align: left">
+                                <div class="slds-truncate" title="Description">{!QLI.Product2.Name}</div>
+                            </td>
+                            <td data-label="Product Description"  style="border: 1px solid black;text-align: right">
+                                <div class="slds-truncate" title="Qty EA">{!QLI.Combined_Quantity__c}</div>
+                            </td>
+                            <td data-label="Product Description"  style="border: 1px solid black;text-align: right">
+                                <div class="slds-truncate" title="Unit Price EURO(FOB Kolkata)">{!QLI.UnitPrice}</div>
+                            </td>
+                            <td data-label="Product Description"  style="border: 1px solid black;text-align: right">
+                                <div class="slds-truncate" title="Total Price EURO(FOB Kolkata)">{!QLI.TotalPrice}</div>    
+                            </td>
+                        </tr>
+                    </apex:repeat>
+                    <tr>
+                        <th colspan="4" style="border: 1px solid black;"><center>Grand Total</center></th>
+                        <th style="border: 1px solid black; text-align:right;" title="Grand Total">
+                            {!offer.GrandTotal}
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+            <div>
+                <h3>
+                    Notes:  
+                </h3><apex:outputField value="{!offer.Notes__c}"/>
+                
+            </div>
+        </div>
+        <div style="page-break-after: always"></div>   
+    </apex:outputPanel>
+
+    <apex:outputPanel rendered="{!IF(priceScheduleChecked == TRUE, true, false) && (NOT(offer.Recordtype.DeveloperName == 'Offer_Non_Spare')) && (offer.Is_Partlist_Same__c == false)}">  
+        <div style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+            <h2> PRICE SCHEDULE </h2><br/>
+            <table style="width:100%; align:center">
+                <thead  >
+                    <apex:repeat value="{!L1l2offerLines}" var="l1l2line" >
+                        <tr class="slds-line-height_reset">
+                            <th class="" scope="col" style="border: 1px solid black;">
+                                <div class="slds-truncate" style="width:30px;" title="Serial No">S.No</div>
+                            </th>
+                            <th class="" scope="col" style="border: 1px solid black; text-align: center;">
+                                <div class="slds-truncate" style="width:400px;" title="Description">Description</div>
+                            </th>
+                            <th class="" scope="col" style="border: 1px solid black;text-align: center;">
+                                <div class="slds-truncate" title="qty EA">Qty EA</div>
+                            </th>
+                            <th class="" scope="col" style="border: 1px solid black; text-align: center;">
+                                <div class="slds-truncate" title="Unit price">Unit Price {!offer.CurrencyIsoCode}</div>
+                            </th>
+                            <th class="" scope="col" style="border: 1px solid black;text-align: center;">
+                                <div class="slds-truncate" title="Total Price">Total Price {!offer.CurrencyIsoCode}</div>
+                            </th>
+                        </tr>
+                        <tr class="slds-hint-parent" >
+                            <th data-label="Serial No" scope="row"  style="border: 1px solid black;">
+                                <div class="slds-row-number slds-text-body_small slds-text-color_weak" title="Serial No">
+                                    {!count}
+                                    <apex:variable value="{!count+1}" var="count" /> 
+                                    
+                                </div>
+                            </th>
+                            <td data-label="Product Name"  style="border: 1px solid black;text-align: right">
+                                <div class="slds-truncate" title="Description">{!l1l2line.Product_Description__c}</div>
+                            </td>
+                            <td data-label="Product Description"  style="border: 1px solid black;">
+                                <div class="slds-truncate" title="Qty EA">{!l1l2line.Quantity__c}</div>
+                            </td>
+                            <td data-label="Product Description"  style="border: 1px solid black;">
+                                <div class="slds-truncate" title="Unit Price">{!l1l2line.Unit_price__c}</div>
+                            </td>
+                            <td data-label="Product Description"  style="border: 1px solid black;">
+                                <div class="slds-truncate" title="Total Price">{!l1l2line.Amount__c}</div>  
+                            </td>
+                        </tr>
+                    </apex:repeat>
+                    <apex:repeat value="{!quotelt}" var="quot">
+                            <b>Offer Number: </b><apex:outPutText value="{!quot.QuoteNumber}"></apex:outPutText> &nbsp;&nbsp;
+                            <b>Offer Name: </b><apex:outPutText value="{!quot.Name}"></apex:outPutText>
+                            <br/><br/>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col" style="border: 1px solid black;">
+                                    <div class="slds-truncate" style="width:30px;" title="Serial No">S.No</div>
+                                </th>
+                                <th class="" scope="col" style="border: 1px solid black; text-align: center;">
+                                    <div class="slds-truncate" style="width:400px;" title="Description">Description</div>
+                                </th>
+                                <th class="" scope="col" style="border: 1px solid black;text-align: center;">
+                                    <div class="slds-truncate" title="qty EA">Qty EA</div>
+                                </th>
+                                <th class="" scope="col" style="border: 1px solid black; text-align: center;">
+                                    <div class="slds-truncate" title="Unit price">Unit Price {!offer.CurrencyIsoCode}</div>
+                                </th>
+                                <th class="" scope="col" style="border: 1px solid black;text-align: center;">
+                                    <div class="slds-truncate" title="Total Price">Total Price {!offer.CurrencyIsoCode}</div>
+                                </th>
+                            </tr>
+                            <apex:repeat value="{!quot.QuoteLineItems}" var="QLI"  >
+                            <tr class="slds-hint-parent" >
+                                <th data-label="Serial No" scope="row"  style="border: 1px solid black;text-align: center">
+                                    <div class="slds-row-number slds-text-body_small slds-text-color_weak" title="Serial No">
+                                        {!count}
+                                        <apex:variable value="{!count+1}" var="count" />
+                                    </div>
+                                </th>
+                                <td data-label="Product Name"  style="border: 1px solid black;text-align: left">
+                                    <div class="slds-truncate" title="Description">{!QLI.Product2.Name}</div>
+                                </td>
+                                <td data-label="Product Description"  style="border: 1px solid black;text-align: right">
+                                    <div class="slds-truncate" title="Qty EA">{!QLI.Quantity}</div>
+                                </td>
+                                <td data-label="Product Description"  style="border: 1px solid black;text-align: right">
+                                    <div class="slds-truncate" title="Unit Price EURO(FOB Kolkata)">{!QLI.UnitPrice}</div>
+                                </td>
+                                <td data-label="Product Description"  style="border: 1px solid black;text-align: right">
+                                    <div class="slds-truncate" title="Total Price EURO(FOB Kolkata)">{!QLI.TotalPrice}</div>
+                                </td>
+                            </tr>
+                            
+                            </apex:repeat>
+                            <tr>
+                                <th colspan="4" style="border: 1px solid black;"><center>Total Price</center></th>
+                                <th style="border: 1px solid black; text-align:right;" title="Grand Total">
+                                    {!quot.GrandTotal}
+                                </th>
+                            </tr>
+                            <br/>
+                            <hr/>
+                            <br/>
+                        </apex:repeat>
+                    
+                </thead>
+            </table>
+            <div>
+                <h3>
+                    Notes:  
+                </h3><apex:outputField value="{!offer.Notes__c}"/>
+                
+            </div>
+        </div>
+        <div style="page-break-after: always"></div>   
+    </apex:outputPanel>
+    
+    <apex:outputPanel rendered="{!IF(scopeOfSupplyChecked == TRUE, true, false) && (NOT(index == 0))}">
+        <apex:outputPanel rendered="{!offer.Recordtype.DeveloperName == 'Offer_Non_Spare'}">
+            <div  style="font-size:14px;font-family:sans-serif;">
+                <h2>
+                    SCOPE OF SUPPLY
+                </h2>
+                {!offer.Opportunity_Equipments__r.Customer_Equipment__r.Equipment_Type__c} &nbsp; Ø &nbsp;{!offer.Opportunity_Equipments__r.Customer_Equipment__r.Dia_m__c} mm X &nbsp;{!offer.Opportunity_Equipments__r.Customer_Equipment__r.Length_m__c} mm<br/>
+                <br/>
+                
+                
+                <apex:outputPanel rendered="{!IF(selectionitemlist.size>0, True, false)}">
+                    <br/>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" >
+                        
+                        <thead >
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col" style="border: 1px solid black; width:15px">
+                                    <div style="width:30px;" title="Serial No">S.No</div>
+                                </th>
+                                <th class="" scope="col" style="border: 1px solid black">
+                                    <div class="slds-truncate" title="Item Category" style="text-align:center;">Item Category</div>
+                                </th>
+                                <th class="" scope="col" style="border: 1px solid black">
+                                    <div title="Item Description" style="text-align:center; width:300px;">Item Description</div>
+                                </th>
+                                <th class="" scope="col" style="border: 1px solid black">
+                                    <div class="slds-truncate" title="Quantity" style="text-align:right;">Quantity</div>
+                                </th>
+                                <th class="" scope="col" style="border: 1px solid black">
+                                    <div class="slds-truncate" title="Unit Price Quoted" style="text-align:right;">Unit Price Quoted</div>
+                                </th>
+                                <th class="" scope="col" style="border: 1px solid black">
+                                    <div class="slds-truncate" title="Total Price Quoted" style="text-align:right;">Total Price Quoted</div>
+                                </th>
+                            </tr>
+                            <apex:repeat value="{!selectionitemlist}" var="selectionitems"  >
+                                <tr class="slds-hint-parent" >
+                                    <th data-label="Serial No" scope="row"  style="border: 1px solid black;">
+                                        
+                                        <div class="slds-row-number slds-text-body_small slds-text-color_weak" title="Serial No" style="text-align:center">
+                                            {!index}
+                                            <apex:variable value="{!index+1}" var="index" /> 
+                                        </div>
+                                    </th>
+                                    <td data-label="Item Category"  style="border: 1px solid black;">
+                                        <div class="slds-truncate" title="Item Category">
+                                            {!selectionitems.Item_Category__c}   
+                                        </div>
+                                    </td>
+                                    
+                                    <td data-label="Item Description"  style="border: 1px solid black;">
+                                        <div class="slds-truncate" title="Item Description" style="text-align:left;">{!selectionitems.Item_Desc__c}</div>
+                                    </td>
+                                    <td data-label="Quantity"  style="border: 1px solid black;">
+                                        <div class="slds-truncate" title="Quantity" style="text-align:right;">  {!selectionitems.Quantity__c} </div>
+                                    </td>
+                                    <td data-label="Unit Price Quoted"  style="border: 1px solid black;">
+                                        <div class="slds-truncate" title="Unit Price Quoted" style="text-align:right;">{!selectionitems.Unit_Price_Quoted__c}</div>   
+                                    </td>
+                                    <td data-label="Total Price Quoted"  style="border: 1px solid black;">
+                                        <div class="slds-truncate" title="Total Price Quoted" style="text-align:right;">{!selectionitems.Total_Price_Quoted__c}</div>   
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                            <tr>
+                                <th colspan="5" style="border: 1px solid black;"><center>Grand Total</center></th>
+                                <th style="border: 1px solid black; text-align:right;" title="Grand Total">
+                                    {!offer.Opportunity_Equipments__r.Grand_Total__c}
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </apex:outputPanel>
+            </div><div style="page-break-after: always"></div>
+        </apex:outputPanel>
+        <div style="page-break-after: always"></div>
+    </apex:outputPanel>
+    
+    <apex:outputPanel rendered="{!IF(termsandConditionsChecked == TRUE, true, false)}">
+        <!--<div style="page-break-after: always"></div>-->
+        <div style="font-size:14px;font-family:sans-serif;">
+            <h2>  TERMS AND CONDITIONS OF SALES  </h2>
+            <b>BUYER</b><br/>   
+            <div>
+                <apex:outputField value="{!offer.Account.Name}"/> <br/>
+                <apex:outputField value="{!offer.Account.BillingCity}"/>
+                <apex:outputField value="{!offer.Account.Billingcountry}"/>
+                <apex:outputField value="{!offer.Account.BillingpostalCode}"/>
+                <apex:outputField value="{!offer.Account.Billingstate}"/>
+                <apex:outputField value="{!offer.Account.Billingstreet}"/>
+            </div><br/>
+            <div>
+                <b>CUSTOMER REFERENCE AND DATE </b><br/>
+                Enquiry No:&nbsp;{!offer.Enquiry_Number__c}  <br/>
+                Date:&nbsp;<apex:outputText value="{0, date,dd MMMM yyyy}"> <br/>
+                <apex:param value="{!offer.createddate}" /> </apex:outputText> <br/>
+                Contact Name: {!offer.Contact.name}  <br/>
+                Contact Email: {!offer.Email}   <br/>
+                Contact Phone: {!offer.Phone}   <br/>
+            </div><br/>
+            <div>
+                <b>OUR REFERENCE  AND DATE</b><br/>
+                Quote: {!offer.QuoteNumber} <br/>
+                Date: <apex:outputText value="{0, date,dd MMMM yyyy}"> <br/>
+                Document Created By: {!currentUser} <br/>
+                <apex:param value="{!offer.createddate}" />
+                </apex:outputText> <br/>
+            </div><br/>
+            <div>
+                <b>OFFER NUMBER AND OFFER DATE</b><br/>
+                {!offer.QuoteNumber} &nbsp;-&nbsp;<apex:outputText value="{0, date,dd MMMM yyyy}">
+                <apex:param value="{!offer.createddate}" /> </apex:outputText>
+            </div>
+            <apex:outputPanel rendered="{!offer.Recordtype.name == 'offer'}">
+               
+                <div>
+                    PRICE<br/>  
+                    {!offer.Opportunity_Equipments__r.CurrencyIsoCode}  &nbsp; &nbsp;AND&nbsp; &nbsp; {!offer.Opportunity_Equipments__r.Total_Price_Quoted__c}
+                    <br/>   
+                </div>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!offer.Recordtype.name == 'Combine'}">
+                
+                <div>
+                    PRICE<br/>  
+                    {!offer.CurrencyIsoCode}  &nbsp; &nbsp;AND&nbsp; &nbsp; {!offer.TotalPrice}
+                    <br/>   
+                </div>
+            </apex:outputPanel><br/>
+            
+            <div>
+                <b>PAYMENT TERMS </b><br/>
+                30% Adv AND 70% against PI.<br/>
+            </div><br/>
+            <div>
+                
+                <b>INCOTERM</b><br/>
+                {!offer.BTP_Type__c} - 
+                {!offer.Incoterm_City__c} 
+            </div><br/>
+            <div>
+                <b>DELIVERY SCHEDULE </b><br/>
+                10 weeks exworks, Kolkata
+            </div><br/>
+            <div>
+                <b>VALIDITY</b><br/>
+                30 days<br/>
+            </div><br/>
+            <div>
+                <b>PLACE OF MANUFACTURING</b><br/>
+                {!offer.Company__r.name}<br/>
+                {!offer.Branch__r.Name}<br/>
+                New Alipore<br/>
+                Kolkata, India – 700 053<br/>
+                
+            </div><br/><br/>
+            <apex:pageBlock >
+                <apex:pageBlockTable value="{!$Resource.Solution} " var=" " width="200%">
+                    <!-- SK - 241122 : Fixed Disclaimer -->
+                    <apex:column headerValue=" " style="width=100%; text-align:center;">
+                        FOR TEGA INDUSTRIES LIMITED <br/>
+                        ** Kindly refer to the attached General Terms and Conditions for terms not mentioned above. **<br/>
+                    </apex:column> 
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+        </div>
+        <div style="page-break-after: always"></div>
+        </apex:outputPanel>
+        
+    <div style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+        <div>
+            <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+                <h2>  SPECIAL CLAUSE </h2>
+            </div>
+            <apex:outputText escape="false" value="{!offer.Offer_Template__r.Special_Clause__c}" ></apex:outputText>
+            <div style="page-break-after: always"></div>
+            
+            <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+                <h2>  TEGA QUALITY ASSURANCE PROGRAMME </h2>
+            </div>
+            <apex:outputText escape="false" value="{!offer.Offer_Template__r.Tega_Quality_Assurance_Program__c}" ></apex:outputText>
+            <div style="page-break-after: always"></div>
+            <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+                
+                <h2> TEGA SERVICES </h2>
+            </div>
+            <apex:outputText escape="false" value="{!offer.Offer_Template__r.Tega_Services__c}" ></apex:outputText>
+        </div>
+        <div style="page-break-after: always"></div>
+    </div>
+    
+        
+        <apex:outputPanel rendered="{!IF(annexureChecked == TRUE, true, false)  && (NOT(offer.Offer_Template__r.Annexure__c == ''))}">
+            <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+                <center> <h2>  ANNEXURE - 1 </h2> </center> 
+                <apex:outputText escape="false" value="{!offer.Offer_Template__r.Annexure__c}" ></apex:outputText>
+            </div>
+            <div style="page-break-after: always"></div>
+        </apex:outputPanel>
+        
+        <apex:outputPanel rendered="{!IF(annexureChecked2 == TRUE, true, false)  && (NOT(offer.Offer_Template__r.Annexure_2__c == ''))}">
+            <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+                <center> <h2>  ANNEXURE - 2 </h2> </center> 
+                <apex:outputText escape="false" value="{!offer.Offer_Template__r.Annexure_2__c}" ></apex:outputText>
+            </div>
+            <div style="page-break-after: always"></div>
+        </apex:outputPanel>
+        
+        <apex:outputPanel rendered="{!IF(annexureChecked3 == TRUE, true, false) && (NOT(offer.Offer_Template__r.Annexure_3__c == ''))}">
+            <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+                <center> <h2>  ANNEXURE - 3 </h2> </center> 
+                <apex:outputText escape="false" value="{!offer.Offer_Template__r.Annexure_3__c}" ></apex:outputText>
+            </div>
+            <div style="page-break-after: always"></div>
+        </apex:outputPanel>
+       
+    
+    <apex:outputPanel rendered="{!IF(generalTermsandconditionChecked == TRUE, true, false)}">
+        <div style="font-size:14px;font-family:sans-serif;">
+            <div  style="font-size:14px;font-family:Helvetica,Arial,sans-serif;">
+                <h2>  GENERAL TERMS AND CONDITIONS OF TEGA </h2>
+            </div>
+            <div style="margin-top:20px;">
+                <div>
+                    <apex:outputText escape="false" value="{!offer.Offer_Template__r.General_Terms_and_Conditions__c}" ></apex:outputText>
+                </div>
+                <div>
+                    <apex:outputText escape="false" value="{!offer.Offer_Template__r.General_T_C_2__c}" ></apex:outputText>
+                </div>
+                <div>
+                    <apex:outputText escape="false" value="{!offer.Offer_Template__r.General_T_C_3__c}" ></apex:outputText>
+                </div>
+                <div>
+                    <apex:outputText escape="false" value="{!offer.Offer_Template__r.General_T_C_4__c}" ></apex:outputText>
+                </div>
+                <div>
+                    <apex:outputText escape="false" value="{!offer.Offer_Template__r.General_T_C_5__c}" ></apex:outputText>
+                </div>
+                <div>
+                    <apex:outputText escape="false" value="{!offer.Offer_Template__r.General_T_C_6__c}" ></apex:outputText> 
+                </div>
+                
+            </div>  
+        </div>
+    </apex:outputPanel>
+    
+    
+    <apex:outputPanel >
+        <div style="width:100%;  float:right; display: inline-block;">
+            <br/><br/>
+            <div style="page-break-after: always"></div> 
+            <br/><br/><br/><br/>
+            <div class="slds-m-vertical_none" style="margin: 0px; padding: 0px; line-height: 0;">
+            <center><apex:outputText escape="false" value="{!offer.Offer_Template__r.General_T_C_Footer__c}" ></apex:outputText></center>
+            </div>
+        </div>
+    </apex:outputPanel>
+    
+    
+</apex:Page>

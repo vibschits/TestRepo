@@ -1,0 +1,64 @@
+<template>
+    <lightning-card>
+        <h3 slot="title">
+            <lightning-icon icon-name="standard:data_model" size="medium"></lightning-icon>
+           4E/D Lines
+        </h3>
+        <lightning-layout horizontal-align="center" if:true={isLine}>
+            <lightning-layout-item size="12" >
+                <table class="slds-table slds-no-row-hover slds-table_bordered">
+                    <thead>
+                        <tr>
+                            <th>
+                                <lightning-input type="checkbox" value={allCheck} onchange={allChangeHandler}>
+                            </lightning-input>
+                            </th>
+                            <th>Description</th>
+                            <th>Quantity</th>  
+                            <th>Price</th>
+                            <th>Delivery Date</th>                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={EDList} for:item="line" for:index="index">
+                            <tr key={line.lineId} >
+                                <td style="padding: 1.4%;">                                    
+                                    <lightning-input type="checkbox" 
+                                                        value={line.isCheck}
+                                                        data-mark="allCheckId"
+                                                        onchange={onChangeHandler}
+                                                        data-index={index} >
+                                                    </lightning-input>
+                                </td>
+                                <td> {line.description}</td>
+                                <td> {line.quantity}</td>
+                                <td> {line.price}</td>
+                                <td>
+                                    <lightning-input type="date" name="DeliveryDate" onchange={handleDateChangeEvent} data-index={index}></lightning-input>
+                                </td>
+                                
+                                
+                            </tr>
+                        </template>
+                    </tbody>
+                    </table>
+            </lightning-layout-item>
+        </lightning-layout>
+
+        <lightning-layout horizontal-align="center" if:false={isLine}>
+            <lightning-layout-item size="6">
+                <lightning-icon size="xx-small" icon-name="action:info" alternative-text="onfo" title="info"></lightning-icon>
+                No records are available to create lines.
+            </lightning-layout-item>
+        </lightning-layout>
+        
+        <p slot="footer" if:true={isLine}>
+            <lightning-button variant="brand" label="Save Lines" onclick={createLines}></lightning-button>
+            <lightning-button label="Cancel" onclick={closeAction}></lightning-button>
+        </p>
+        <template if:true={isLoad}>
+            <lightning-spinner variant="brand" size="large" alternative-text="Loading"></lightning-spinner>
+        </template>
+        
+    </lightning-card>
+</template>

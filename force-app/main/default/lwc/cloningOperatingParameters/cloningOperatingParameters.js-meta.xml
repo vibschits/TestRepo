@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Cloning OP LWC Component</masterLabel>
+    <targets>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <propertyType name="T" extends="SObject" label="Input Type" description="Generic sObject data type used for input sObject properties"/>
+            <property name="listOfOperatingParameters" type="{T[]}" label="List OP" role="inputOnly"/>
+            <property name="prfRecTypeName" type="String" label="PRF RecTypeName" role="inputOnly"/>
+            <property name="selectedOperatingParameter" type="String" label="Selected OP" role="outputOnly"/>
+            <property name="selectedBtn" type="String" label="Selected Btn" role="outputOnly"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

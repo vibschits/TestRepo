@@ -1,0 +1,321 @@
+<apex:page standardController="Invoice__c" extensions="ProformaInvoicePDF_Controller" cache="true" renderAs="pdf"  showHeader="true" applyHtmlTag="true"  standardStylesheets="true" title="Proforma Invoice">
+<html>
+    
+  
+<head>
+        <style type="text/css" media="print">
+            <!--- Table Styling -->
+        .divStyle{
+            font-family: sans-serif;
+        }
+            <!--/Table Styling 281222:SK-->
+            table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            }
+            .div {
+            float: left;
+            padding: 15px; 
+            }
+            @page {
+            @top-center {
+            content: element(header);
+            }
+            @bottom-left {
+            content: element(footer);
+            }
+            margin-top: 10px;
+            }
+            
+            div.header {
+            padding: 10px;
+            position: running(header);
+            }
+            
+            div.footer {
+            position: running(footer);
+            }
+            
+            .pagenumber:before {
+            content: counter(page);
+            }
+            
+            .pagecount:before {
+            text-align:right;
+            content: counter(pages);
+            }
+            
+           
+            .customImage {
+            height: 100px;
+            width: 50px;
+            }
+            
+            .tsi {
+            height: 900px;
+            weidth: 500px;
+            }
+            
+            #coverImage{
+            border-image-source: {!$Resource.TegaImage1};
+            }
+        </style>
+    </head>
+    
+<body>
+<!-- SK:301222 -->
+<div class="header" style="position: top;">
+    <apex:pageBlock >
+        <apex:pageBlockTable value="{!$Resource.Solution} " var=" " width="100%" border="">
+            <apex:column headerValue=" " style="width=50%; text-align:left; font-family: sans-serif;">
+                <br/><br/><apex:outputText escape="false" value="{!Invoice__c.Invoice_Template__r.Tag_Line__c}"/>
+            </apex:column>
+            <apex:column headerValue=" " style="width=50%;text-align:right;">
+                <apex:outputText escape="false" value="{!Invoice__c.Invoice_Template__r.Logo__c}" style="position: absolute;right:0;top:0;"/>
+            </apex:column> 
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</div>
+
+<!-- Section: Header -->
+<div style="font-family:sans-serif; font-size:12px;">
+    <b>PROFORMA INVOICE</b><hr/>
+    <div border="1">
+
+        <table width="100%">
+            <th width="50%">Buyer</th>
+            <th width="50%">Consignee</th>
+            <tr>
+                <td>
+                    <apex:outputPanel rendered="{!isBuyerSameAsConsignee < 1}" >
+                        <div style="font-family:sans-serif; font-size:16px;">{!Invoice__c.Buyer__r.Name}<br/></div><br/>
+                    <div>{!Invoice__c.Buyer__r.BillingStreet}<br/>
+                        {!Invoice__c.Buyer__r.BillingCity}<br/>
+                        {!Invoice__c.Buyer__r.BillingPostalCode}<br/><br/><br/>
+                    </div>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!isBuyerSameAsConsignee > 0}" > 
+                    <div style="font-family:sans-serif; font-size:16px;">SAME AS CONSIGNEE<br/></div><br/><br/><br/><br/><br/><br/>
+                </apex:outputPanel>
+                </td>
+
+                <td>
+                    <div>
+                        <div style="font-family:sans-serif; font-size:16px;">{!Invoice__c.Consignee__r.Name}<br/></div><br/>
+                        <div>{!Invoice__c.Consignee__r.BillingStreet}<br/>
+                            {!Invoice__c.Consignee__r.BillingCity}<br/>
+                            {!Invoice__c.Consignee__r.BillingPostalCode}<br/>
+                            Tel No.: {!Invoice__c.Consignee__r.Tel_No__c}<br/>
+                            GSTIN/Unique No: {!Invoice__c.Consignee__r.GST_No__c}<br/><br/>
+                        </div>
+                    </div>
+                </td>
+               
+            </tr>
+        </table>
+
+        <table width="100%" border="">
+            <th width="50%">Seller</th>
+            <th width="20%">Details</th>
+            <th width="10%"></th>
+            <th width="20%"></th>
+            <tr>
+                <td style="font-family:sans-serif; font-size:16px;">{!PDFCompanyName}<br/><pre style="font-family:sans-serif; font-size:12px;">{!Address}</pre></td>
+                <td>
+                    Invoice: {!Invoice__c.Name}<br/><br/>
+                    <b>Other References</b><br/>
+                    SO No: {!Invoice__c.SO_Number__r.OrderNumber}<br/>
+                    PO No: {!Invoice__c.SO_Number__r.Customer_PO_No__c}<br/>
+                    GST No: {!Invoice__c.GST_Number__c}<br/>
+                    VAT No: {!Invoice__c.VAT_Number__c}<br/>
+                    <br/>
+                    <br/><br/>
+                </td>
+                <td style="text-align:right;">Date: <br/><br/><br/> Date: <br/>Date: <br/><br/><br/><br/><br/><br/></td>
+                <td>
+                    <apex:outputText value="{0,date,dd'-'MM'-'yyyy}">
+                        <apex:param value="{!Invoice__c.Invoice_Date__c}"/>
+                    </apex:outputText><br/><br/><br/>
+            
+                    <apex:outputText value="{0, date,dd'-'MM'-'yyyy}">
+                        <apex:param value="{!Invoice__c.SO_Number__r.EffectiveDate}" /> 
+                    </apex:outputText><br/>
+
+                    <apex:outputText value="{0, date,dd'-'MM'-'yyyy}">
+                        <apex:param value="{!Invoice__c.SO_Number__r.Customer_PO_date__c}" /> 
+                    </apex:outputText><br/>
+                    <br/>
+                    <br/><br/><br/><br/>
+                
+                </td>
+            </tr>
+        </table>
+    </div><br/><br/>
+    <div style="font-family:sans-serif; font-size:12px;">
+        <b>LOGISTICS INFORMATION</b><hr/>
+        <table width="100%" border="">
+            <th width="20%"></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <tr>
+                <td>
+                    <b>Pre-Carriage by:</b><br/>{!Invoice__c.Pre_carriage__c}<br/><br/><br/>
+                </td>
+                <td>
+                    <b>Place of Receipt by Pre-Carrier:</b><br/>{!Invoice__c.Place_of_Receipt_by_Pre_Carrier__c}<br/><br/>
+                </td>
+                <td><b>Port of Loading:</b><br/> {!Invoice__c.Port_of_Loading__c}<br/><br/></td>
+                <td><b>Port of Discharge:</b><br/>{!Invoice__c.Port_of_Discharge__c}<br/><br/></td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Vessel/Flight No.:</b><br/>{!Invoice__c.Vessel_Flight_No__c}<br/><br/>
+                </td>
+                <td>
+                    <b>Mode of Dispatch:</b><br/>{!Invoice__c.Dispatch_Mode__c}<br/><br/>
+                </td>
+                <td>
+                    <b>Country of Origin of Goods:</b><br/>{!CountryOrigin}<br/><br/>
+                </td>
+                <td>
+                    <b>Country of Destination of Goods:</b><br/>{!CountryFinalDestination}<br/><br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <b>Delivery Terms:</b><br/>
+                    {!Invoice__c.Delivery_Term__c} {!Invoice__c.SO_Number__r.Incoterms__c} {!Invoice__c.SO_Number__r.Incoterm_City__c}<br/><br/>
+                </td>
+                <td>
+                    <b>Payment Terms:</b><br/>
+                    {!Invoice__c.Payment_Terms__c}<br/><br/>
+                </td>
+                <td>
+                    <b>Shipping Marks:</b><br/>
+                    {!Invoice__c.Additional_Information_to_Payment__c}<br/><br/>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div><br/><br/>
+
+<!-- Section: Product -->
+
+<apex:outputPanel >
+            <div> 
+                <b style="font-family: sans-serif; font-size:12px;">PRODUCT TABLE</b>
+                <hr/>
+            <table style="font-family:sans-serif; font-size: 12px;" cellspacing="1" cellpadding="1" width="100%">    
+                <tr style="background-color: #bfbfbf;">
+                    <th width="7%" style="text-align:center">SI No.</th>   
+                    <th>Description</th>
+                    <th width="10%">HSN Code</th> 
+                    <th style="text-align:center" width="5%">Quantity</th> 
+                    <th style="text-align:center" width= "10%">Unit</th>
+                    <th style="text-align:right"  width="12%">Unit Price</th>
+                    <th style="text-align:right" width="12%">Total Price</th>
+                </tr> 
+                <apex:variable value="{!1}" var="count" />  
+                <apex:variable var="row" value="{!0}"/>
+                <apex:repeat value="{!wrapperlst}" var="wrap">   
+                    <tr style="{!IF(MOD(count,2)==0, 'background-color: #e8e8ee;','background-color: #f6f6fc;')}">                
+                        <td style="text-align:center">{!count}
+                            <apex:variable value="{!count+1}" var="count" /> 
+                        </td>
+                        <td>{!wrap.Description}</td>
+                        <td>{!wrap.HSNCode}</td>
+                        <td style="text-align:center">{!wrap.Quantity}</td>
+                        <td style="text-align:center">EACH</td>
+                        <td style="text-align:right">{!wrap.UnitPrice}</td>
+                        <td style="text-align:right">{!wrap.TotalPrice}</td>
+                    </tr> 
+                </apex:repeat>
+            </table><br/>
+
+            <div>
+                <div>
+                    <table style="font-family:sans-serif; font-size: 12px; float:right;" border="" cellspacing="0" cellpadding="1" width="100%">
+                        <tr>
+                            <td style="font-size:7px;" width="89%"> &nbsp; </td>
+                        </tr>
+                          <tr style="border-style:hidden; background-color: #bfbfbf;">  
+                              <td style="text-align:right;"><b>Total Basic({!InvCurrency})</b></td>
+                              <td style="text-align:right">{!Total}</td> 
+                          </tr>
+                          <tr style="border-style:hidden; background-color: #f6f6fc;">
+                              <td style="text-align:right;"><b>Gross Amount</b></td>
+                              <td style="text-align:right">{!Total}</td> 
+                          </tr>
+                          <tr style="border-style:hidden; background-color: #e8e8ee;">
+                              <td style="text-align:right;"><b>Claim Advance ({!Invoice__c.Total_Due__c}%)</b></td>
+                              <td style="text-align:right">{!discountTotal}</td> 
+                          </tr>
+                          <tr style="border-style:hidden; background-color: #f6f6fc;">
+                              <td style="text-align:right;"><b>Due Now (Round Off)</b></td>
+                              <td style="text-align:right">{!roundOffTotal}.00</td> 
+                          </tr>
+                          <tr>
+                          <td colspan="6">
+                          </td>
+                          </tr>
+                      </table>
+                  </div>                  
+            </div>
+        </div>
+    </apex:outputPanel><br/><br/><br/><br/><br/><br/>
+
+<!-- Section: Notes -->
+<div style="font-family:sans-serif; font-size:12px;">
+    <b>NOTES</b><hr/>
+    <table>
+        <tr>
+            <td>
+                <pre style="font-family:sans-serif; font-size:12px;">{!Invoice__c.Notes__c}</pre>
+            </td>
+        </tr>
+    </table>
+</div><br/>
+
+<!-- Section: Bank Details -->
+<div style="font-family:sans-serif; font-size:12px;">
+    <b>Bank Details and Other Information</b><hr/>
+    <table width="100%" border="">
+        <th width="33%"></th>
+        <th width="33%"></th>
+        <tr>
+            <td >
+                <span style="font-family:sans-serif; font-size:10px;">
+                    I.E.C.CODE NUMBER: {!Invoice__c.IEC_Code__c}<br/><br/>
+                    <!--<pre style="font-family:sans-serif; font-size:10px;"><apex:outputText value="{!Footer_Address}" escape="false"></apex:outputText></pre>-->
+                    <!--<pre style="font-family:sans-serif; font-size:10px;"><apex:outputText value="{!Footer_Declaration}" escape="false"></apex:outputText></pre>-->
+                    PLEASE REMIT AMOUNT THROUGH SWIFT NO. SCBLINBB and IFSC CODE:<br/>
+                    OUR BANKER: {!Invoice__c.Bank_Name__c}<br/>
+                    BENEFICIARY: {!Invoice__c.Beneficiary__c}<br/>
+                    ACCOUNT NUMBER: {!Invoice__c.Account_Number__c}<br/>
+                    SWIFT CODE: {!Invoice__c.Swift_Code__c}<br/>
+                    <pre style="font-family:sans-serif; font-size:10px;"><apex:outputText value="{!Footer_Contact_us}" escape="false"></apex:outputText></pre>
+                <apex:outputText style="font-family:sans-serif; font-size:10px;" value="{!Invoice__c.Invoice_Template__r.Footer_Declaration__c}" escape="false">
+                </apex:outputText>
+            </span>
+            </td>
+            <td style="font-family:sans-serif; font-size:10px; text-align:right;">
+                <apex:outputText style="font-family:sans-serif; font-size:10px;" value="{!Invoice__c.Invoice_Template__r.Digital_Signature__c}" escape="false"></apex:outputText>
+                <br/><br/><br/>
+                For, <b>TEGA INDUSTRIES LIMITED</b><br/><br/>
+                <i>Authorised Signatory.</i>
+            </td>
+        </tr>
+    </table>
+</div><br/>
+
+<!-- Section: Footer -->
+<div>
+    <hr/>
+    <apex:image url="{!$Resource.ProformaInvoiceFooterImage}" width="100%"/>
+
+</div>
+<!-- body end -->        
+    </body>
+    </html>  
+</apex:page>

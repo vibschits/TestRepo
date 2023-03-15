@@ -1,0 +1,63 @@
+<aura:component controller="SampleAuraController" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" 
+                access="global">    
+    <aura:handler name="change" value="{!v.Group_name}" action="{!c.onGroupItemChange}"/>
+    <aura:handler name="change" value="{!v.User_Id}" action="{!c.onUserItemChange}"/>
+    <aura:attribute name="Group_Id" type="String"/>
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false"/>
+    <aura:attribute name="Group_name" type="String"/>
+    <aura:attribute name="User_Id" type="String"/>
+    <aura:attribute name="User_name" type="String"/>
+    <aura:attribute name="UserList" type="List" default="[]" description="Avilable Users"/>
+    <aura:attribute name="selectedUserList" type="List" default="[]" description="Selected Users"/>
+    <aura:attribute name="GroupList" type="List" default="[]" description="Avilable Groups"/>
+    <aura:attribute name="selectedGroupList" type="List" default="[]" description="Selected Groups"/>
+<lightning:tabset>
+   <lightning:tab label="Search by Group" id="userId">
+<c:DualListBoxSmartSearch objectName="Group" fieldName="Name" Label="Group name" 
+                             selectRecordId="{!v.Group_Id}" selectRecordName="{!v.Group_name}" 
+                             required="false" iconName="action:groups"/>
+
+ 
+
+    <div class="slds-m-around_xx-large">
+        <lightning:dualListbox aura:id="selectUser"
+                               name="User"
+                               label="Select User"
+                               sourceLabel="Available User"
+                               selectedLabel="Selected User"
+                               options="{!v.UserList }"
+                               value="{!v.selectedUserList}"
+                               onchange="{!c.handleUserChange}"/>
+        <br/>
+        <lightning:button variant="brand" label="Save" onclick="{!c.processGroupMembership}" />
+    </div>
+    </lightning:tab>
+    <lightning:tab label="Search by User" id="groupId">
+        <c:DualListBoxSmartSearch objectName="User" fieldName="Name" Label="User name" 
+                             selectRecordId="{!v.User_Id}" selectRecordName="{!v.User_name}" 
+                             required="false" iconName="action:user"/>
+        
+        <div class="slds-m-around_xx-large">
+             <lightning:dualListbox aura:id="selectGroup"
+                               name="Group"
+                               label="Select Group"
+                               sourceLabel="Available Group"
+                               selectedLabel="Selected Group"
+                               options="{!v.GroupList}"
+                               value="{!v.selectedGroupList}"
+                               onchange="{!c.handleUserChange}"/>
+            <br/>
+            <lightning:button variant="brand" label="Save" onclick="{!c.processUserMembership}" />
+        </div>
+    </lightning:tab>
+   </lightning:tabset>
+   <aura:if isTrue="{!v.showLoadingSpinner}">
+              <div class="demo-only" style="height: 6rem;">
+                  <div role="status" class="slds-spinner slds-spinner_medium">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                  </div>
+                </div>
+           </aura:if>   
+</aura:component>

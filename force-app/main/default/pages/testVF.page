@@ -1,0 +1,15 @@
+<apex:page >
+
+<script>
+    var lexOrigin = "https://chitsvibs-dev-ed.lightning.force.com";
+    window.addEventListener("message", function(event) {
+        if (event.origin !== lexOrigin) {
+            // Not the expected origin: reject message!
+            return;
+        }
+        // Handle message
+        console.log(event.data);
+    }, false);
+</script>
+
+</apex:page>

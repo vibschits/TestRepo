@@ -1,0 +1,49 @@
+<aura:component implements="lightning:isUrlAddressable" controller="ProcessListViewInstApexController">
+	
+    <aura:attribute name="inventoryIdList" type="List"/>
+    <aura:attribute type="Installation__c[]" name="insList"/>
+    <aura:attribute name="mycolumns" type="List"/>
+    <aura:attribute name="errorMessage" type="String"/>
+    <aura:attribute name="showModal" type="boolean" default="false"/>
+    <aura:attribute type="Installation_line_Items__c[]" name="instLineItemList"/>
+    <aura:attribute type="Customer_Inventory_Stock__c[]" name="custInvUpdatedList"/>
+    <aura:attribute name="installationRecId" type="String"/>
+
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onPageReferenceChange}"/>
+
+    <div style="height: 300px">
+        <lightning:datatable data="{! v.insList }"
+                         columns="{! v.mycolumns }"
+                         keyField="id"
+                         hideCheckboxColumn="false"
+                         onrowselection="{! c.onRowSelected }"/>
+    </div>
+    
+    <aura:if isTrue="{!v.showModal}">
+        <div class="dialog" style="height: 640px;">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Error Message</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>{!v.errorMessage}</p>
+                    </div>                   
+                    <footer class="slds-modal__footer">
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <p>Do you want to create Partial Records?</p>
+                        </div>
+                        <button class="slds-button slds-button_neutral" onclick="{!c.yesOption}">Yes</button>
+                        <button class="slds-button slds-button_neutral" onclick="{!c.noOption}">No</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>
+    
+</aura:component>

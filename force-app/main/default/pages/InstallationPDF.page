@@ -1,0 +1,263 @@
+<apex:page standardController="Installation__c"  extensions="InstallationPDFController" showHeader="true"  
+           sidebar="false" standardStylesheets="false" 
+           applyBodyTag="false" applyHtmlTag="true" 
+           renderAs="PDF" contentType="Application/pdf#{fileName}.pdf">
+    <apex:variable value="{!1}" var="count" />
+    <head>
+        <style type="text/css" media="print">
+            @page {
+            @top-center {
+            content: element(header);
+            }
+            @bottom-left {
+            content: element(footer);
+            }
+            margin-top: 150px;
+            }
+            
+            div.header {
+            padding: 10px;
+            position: running(header);
+            }
+            
+            div.footer {
+            position: running(footer);
+            }
+            
+            .pagenumber:before {
+            content: counter(page);
+            }
+            
+            .pagecount:before {
+            text-align:right;
+            content: counter(pages);
+            }
+            
+            table {
+            table-layout: auto;
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid black;
+            }
+            
+            th, td {
+            padding: 5px;
+            }
+            
+            .customImage {
+            height: 100px;
+            width: 50px;
+            }
+            
+            .tsi {
+            height: 900px;
+            weidth: 500px;
+            }
+            
+            #coverImage{
+            border-image-source: {!$Resource.TegaImage1};
+            }
+        </style>
+    </head>
+    <!-- Footer -->
+    <div class="footer">
+        <hr style=" margin-bottom: 0px;"/>
+        <div style="font-size:14px;font-family:sans-serif;">
+            <!-- <div style="position: absolute;left: 0;top:0;">
+&nbsp;{!Installation__c.Name} 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Date:&nbsp; <apex:outputText value="{0, date,dd MMMM yyyy}">
+<apex:param value="{!Installation__c.Installation_Date__c}" /> 
+</apex:outputText>
+</div>-->
+            <div>
+                <table width="100%">
+                    <tr>
+                        <td style="text-align: left" >
+                            {!Installation__c.Name}
+                        </td>
+                        <td>
+                            <div style="text-align: right" >
+                                Date:&nbsp; <apex:outputText value="{0, date,dd MMMM yyyy}">
+                                <apex:param value="{!Installation__c.Installation_Date__c}" />
+                                </apex:outputText>
+                            </div>
+                            
+                        </td>
+                        <td style="text-align: right" >
+                            Page <span class="pagenumber"/> of <span class="pagecount"/>
+                        </td>
+                    </tr>                    
+                </table>
+            </div>
+            <!--<div  style="position: absolute;right: 0;top:0; text-align: right" >
+&nbsp;&nbsp;Page <span class="pagenumber"/> of <span class="pagecount"/>
+</div>
+<div  style="position: absolute;left: 0;top:0;">
+
+</div>-->
+        </div>
+    </div>
+    
+    <div class="header" style="position: top;">
+        <apex:pageBlock >
+            <apex:pageBlockTable value="{!$Resource.Solution} " var=" " width="100%" border="">
+                <apex:column headerValue=" " style="width=50%; text-align:left; font-family: sans-serif;">
+                    <br/><br/><apex:outputText escape="false" value="{!Installation__c.Installation_Template__r.Tag_Line__c}"/>
+                </apex:column>
+                <apex:column headerValue=" " style="width=50%;text-align:right;">
+                    <apex:outputText escape="false" value="{!Installation__c.Installation_Template__r.Logo__c}" style="position: absolute;right:0;top:0;"/>
+                </apex:column> 
+            </apex:pageBlockTable>
+            <hr/>
+        </apex:pageBlock>
+    </div>
+    
+    
+    <apex:outputPanel >
+        <div style="font-size:14px;font-family:sans-serif;">
+            <div>
+                <br/><br/>
+            </div>
+            <h2>
+                INTRODUCTION LETTER
+            </h2><br/><br/>
+            To,<br/>
+            {!Installation__c.Customer__r.Name}<br/>
+            <apex:outputField value="{!Installation__c.Customer__r.BillingCity}"/><br/>
+            <apex:outputField value="{!Installation__c.Customer__r.Billingcountry}"/><br/>
+            <apex:outputField value="{!Installation__c.Customer__r.BillingpostalCode}"/><br/>
+            <apex:outputField value="{!Installation__c.Customer__r.Billingstate}"/><br/>
+            <apex:outputField value="{!Installation__c.Customer__r.Billingstreet}"/><br/><br/><br/>
+            Kind attention:  {!Installation__c.Customer__r.Name}<br/><br/>
+            Subject: Installation of {!Installation__c.Name} {!Installation__c.Product_Code__c} <br/><br/>
+            Dear Client,<br/><br/>
+            With reference to the above we are pleased to enclose installation details of &nbsp;{!Installation__c.Name} dated of&nbsp; <apex:outputText value="{0, date,dd MMMM yyyy}">
+            <apex:param value="{!Installation__c.Installation_Date__c}" /></apex:outputText> for your kind consideration.<br/><br/>
+            We trust, you will find our Installation in line with your requirements and now look forward for your valued feedback soon.<br/><br/>
+            However, in case you need any further information/clarification, we shall be glad to be of any assistance to you.<br/><br/>
+            Thanking you and assuring you of our best services always, we remain. <br/> <br/>
+            Regards,<br/> <br/>
+            <b>{!Installation__c.Owner.Name}</b><br/>
+            Tega Industries Limited<br/>
+            
+            
+        </div>
+        <div style="page-break-after: always"></div>
+    </apex:outputPanel>
+    
+    <apex:outputPanel >
+        <div  style="font-size:14px;font-family:sans-serif;">
+            
+            <div  style="font-size:14px;font-family:sans-serif;">
+                <br/>
+                
+                <h2>
+                    About Tega
+                </h2>
+            </div>
+            <div>
+                <apex:outputText escape="false" value="{!Installation__c.Installation_Template__r.About_Tega__c}"></apex:outputText>
+            </div>
+            
+        </div>
+        <div style="page-break-after: always"></div>
+    </apex:outputPanel>
+    
+    <apex:pageBlock id="instDetails" >
+        <div style="font-size:14px;font-family:sans-serif;">
+            <h2><br/>
+                INSTALLATION DETAILS
+            </h2>
+        </div>
+        <apex:pageBlock rendered="{!nonCCRec}" >
+            <table style="font-family:sans-serif; font-size:12px;">
+                <tr>
+                    <apex:repeat var="f" value="{!$ObjectType.Installation__c.FieldSets.Installation_Field_Set}">
+                        <th>
+                            <tr>
+                                <td><apex:outputText styleClass="bold" value="{!$ObjectType.Installation__c.Fields[f].label}"/> 
+                                </td>
+                                <td>
+                                    <apex:repeat value="{!instListObj}" var="obj">
+                                        :&nbsp; &nbsp;<apex:outputField value="{!obj[f]}"/>
+                                    </apex:repeat>
+                                </td>
+                            </tr>
+                        </th>
+                    </apex:repeat>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <apex:pageBlock rendered="{!ccRec}">
+            <table style="font-family:sans-serif; font-size:12px;">
+                <tr>
+                    <apex:repeat var="f" value="{!$ObjectType.Installation__c.FieldSets.CC_Field_Set}">
+                        <th>
+                            <tr>
+                                <td><apex:outputText styleClass="bold" value="{!$ObjectType.Installation__c.Fields[f].label}"/> 
+                                </td>
+                                <td>
+                                    <apex:repeat value="{!instListObj}" var="obj">
+                                        :&nbsp; &nbsp;<apex:outputField value="{!obj[f]}"/>
+                                    </apex:repeat>
+                                </td>
+                            </tr>
+                        </th>
+                    </apex:repeat>
+                </tr>
+            </table>
+        </apex:pageBlock>
+    </apex:pageBlock>
+    
+    <apex:outputPanel rendered="{!isLineItem}">
+        <div style="font-size:14px;font-family:sans-serif;">
+            <h2><br/>
+                INSTALLATION LINE ITEMS
+            </h2>
+        </div>
+        <div style="overflow-x:scroll;">
+            <table style="font-family:sans-serif; font-size:12px;" width="100%"  border="" cellpadding = "1" cellspacing = "1">    
+                <tr style="background-color: #bfbfbf;">
+                    <th style="text-align:left;">SR No.</th>    
+                    <th style="text-align:left;" colspan="2">Installation Name</th>
+                    <th style="text-align:left;" colspan="2">Line Item</th>
+                    <th style="text-align:left;" >Installation Date</th>
+                    <th style="text-align:center;">Installed At</th>
+                    <th style="text-align:center;">Quantity (in Nos)</th>
+                    <th style="text-align:center;">Starting Date of Job</th>
+                    <th style="text-align:center;">Ending Date of Job</th>
+                </tr> 
+                <apex:variable value="{!1}" var="count" />
+                <apex:variable var="row" value="{!0}"/>  
+                <apex:repeat value="{!wrapperlst}" var="wrap">   
+                    <tr style="{!IF(MOD(count,2)==0, 'background-color: #e8e8ee;','background-color: #f6f6fc;')}">                
+                        <td style="text-align:left;">{!count}
+                            <apex:variable value="{!count+1}" var="count" /> 
+                        </td>
+                        <td colspan="2">{!wrap.installationName}</td>
+                        <td colspan="2">{!wrap.installationLineItem}</td>
+                        <td style="text-align:right;">
+                            <apex:outputText value="{0,date,dd'-'MM'-'yyyy}">
+                                <apex:param value="{!wrap.installationDate}"/>
+                            </apex:outputText></td>
+                        <td style="text-align:right;">{!wrap.installedAt}</td>
+                        <td style="text-align:right;">{!wrap.installedQuantity}</td>
+                        <td style="text-align:right;">
+                            <apex:outputText value="{0,date,dd'-'MM'-'yyyy}">
+                                <apex:param value="{!wrap.startingDate}"/>
+                            </apex:outputText></td>
+                        <td style="text-align:right;">
+                            <apex:outputText value="{0,date,dd'-'MM'-'yyyy}">
+                                <apex:param value="{!wrap.endingDate}"/>
+                            </apex:outputText></td>
+                    </tr>   
+                </apex:repeat>
+            </table>
+        </div>
+        <!--<div style="page-break-after: always"></div>-->
+    </apex:outputPanel>  
+</apex:page>

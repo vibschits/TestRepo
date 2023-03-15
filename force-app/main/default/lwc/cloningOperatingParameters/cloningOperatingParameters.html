@@ -1,0 +1,33 @@
+<template>
+    <lightning-Card title="Operating Parameters" icon-name="standard:account">
+        <template if:true={multipleCheckboxSelected}>
+            <div class="slds-text-color_error slds-p-vertical_medium">Please select only one Operating Parameter</div>
+        </template>
+        <div style="border-top: 1px solid rgb(221 219 218);">
+            <lightning-datatable
+                    key-field="id"
+                    data={dataTableData}
+                    columns={columns}
+                    column-widths-mode="fixed"
+                    default-sort-direction={defaultSortDirection}
+                    sorted-direction={sortDirection}
+                    sorted-by={sortedBy}
+                    onsort={onHandleSort}>
+            </lightning-datatable>
+        </div>
+        <lightning-button   variant="Neutral"
+                            label="Clone"
+                            title="Next"
+                            data-id="Clone_Button" 
+                            onclick={getSelectedRec} 
+                            slot="actions">
+        </lightning-button>
+        <lightning-button   variant="Brand"
+                            label="Tag to PRF"
+                            title="Tag to PRF"
+                            data-id="Tag_Button"
+                            onclick={getSelectedRec2} 
+                            slot="actions">
+        </lightning-button>
+    </lightning-Card>
+</template>

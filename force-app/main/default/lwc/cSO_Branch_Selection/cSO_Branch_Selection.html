@@ -1,0 +1,102 @@
+<template>
+    <div class="stylecode">
+        <template if:true={isReadMode}>
+            <lightning-record-view-form
+                object-api-name='Customer_Sales_Organization__c'
+                record-id={recordId}
+            >
+            <div class="slds-box">
+                <lightning-output-field field-name={companyField}></lightning-output-field>
+                <lightning-output-field field-name={branchField}></lightning-output-field>
+                <lightning-output-field field-name={distributionChannelField}></lightning-output-field>
+                <lightning-output-field field-name={nameField}></lightning-output-field>
+                <!--lightning-output-field field-name={currencyField}></lightning-output-field-->
+                <lightning-output-field field-name={customerField}></lightning-output-field>
+                <lightning-output-field field-name={customerCodeField}></lightning-output-field>
+                <lightning-output-field field-name={divisionField}></lightning-output-field>
+                <lightning-output-field field-name={statusField}></lightning-output-field>
+                <lightning-output-field field-name={createdByField}></lightning-output-field>
+                <lightning-output-field field-name={createdDateField}></lightning-output-field>
+                <lightning-output-field field-name={lastModifiedByField}></lightning-output-field>
+                <lightning-output-field field-name={lastModifiedDateField}></lightning-output-field>
+            </div>
+            </lightning-record-view-form>
+            <!-- <div class="slds-align_absolute-center" style="height:3rem">
+                <div class="slds-p-top_medium">
+                    <lightning-button variant="brand" label="Edit" title="Edit" onclick={handleEdit} class="slds-m-left_x-small"></lightning-button>
+                </div>
+            </div> -->
+        </template>
+        
+        <template if:true={isEditMode}>
+            <lightning-card  title="Edit Customer Sales Organization">
+                <div class="slds-p-around_x-large">
+                    <div class="slds-grid slds-gutters slds-wrap">
+                        <div class="slds-col slds-size_1-of-1">
+                            <lightning-combobox
+                            name="company"
+                            label="Company"
+                            value={value1}
+                            placeholder="Select Company"
+                            options={options}
+                            onchange={handleChange1} ></lightning-combobox>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1">
+                            <lightning-combobox
+                            name="branch"
+                            label="Branch"
+                            value={value2}
+                            placeholder="Select Branch"
+                            options={options2}
+                            onchange={handleChange2}
+                            disabled={isCompanyFilled} ></lightning-combobox>
+                        </div>  
+                    </div>
+                    
+                    <div class="slds-p-top_medium">
+                        <lightning-record-edit-form
+                            id="recordEditForm"
+                            record-id={recordId}
+                            object-api-name="Customer_Sales_Organization__c"
+                            onsubmit={handleSubmit}
+                        >
+                    
+                        <div class="slds-box">
+                            <lightning-input-field field-name={nameField}></lightning-input-field>
+                            <!--lightning-input-field field-name={currencyField}></lightning-input-field-->
+                            <lightning-input-field field-name={customerField}></lightning-input-field>
+                            <lightning-input-field field-name={divisionField}></lightning-input-field>
+                        </div>
+                        
+
+                        <!-- <template if:true={isBothFilled}> -->
+                            <div class="slds-align_absolute-center" style="height:3rem">
+                                <div class="slds-p-top_medium">
+                                    <lightning-button
+                                            type="submit"
+                                            variant="brand"
+                                            label="Update Record"
+                                            class="slds-m-top_medium"
+                                            onclick={saveClick}
+                                            disabled={isBothFilled}
+                                        >
+                                    </lightning-button>
+                                        <lightning-button
+                                                variant="destructive"
+                                                label="Cancel"
+                                                class="slds-m-top_medium"
+                                                onclick={cancelClick}
+                                            >
+                                        </lightning-button>
+                                    
+                                </div>
+                            </div>
+                        <!-- </template> -->
+                        </lightning-record-edit-form>
+                    </div>
+            </div>
+        </lightning-card>
+     </template>
+        
+    </div>
+</template>

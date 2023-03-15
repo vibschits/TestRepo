@@ -1,0 +1,31 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" controller="SendToSapController">
+    <div class="slds-m-around_xx-large">
+        
+        <!-- <aura:if isTrue="{!v.showConfirmDialog}"> -->
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container">
+                    <!--Modal Box Header Start-->
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading--medium">Confirmation</h1>
+                    </header>
+                    <!--Modal Box Header End-->
+                    
+                    <!--Modal Box Content Start-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <center><b>Do you want to Send  this offer to SAP?</b></center>
+                    </div>
+                    <!--Modal Box Content End-->
+                    
+                    <!--Modal Box Button Start-->
+                    <footer style="text-align: center; padding: 4%;">
+                        <lightning:button name='No' label='No' onclick='{!c.handleDialogNo}' />
+                        <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.updateToSap}' />
+                    </footer>
+                    <!--Modal Box Button End-->
+                </div>
+            </div>
+            <!-- <div class="slds-backdrop slds-backdrop open"></div> -->
+        <!-- </aura:if> -->
+    </div>
+</aura:component>

@@ -1,0 +1,10 @@
+<aura:component implements="flexipage:availableForAllPageTypes"
+                access="global" controller="LightningVFControlller">
+    <aura:attribute name="InstrumentationKey" type="String"/>
+    <aura:attribute name="NameSpace" type="String"/>
+    <aura:attribute name="message" type="String"/>
+    <aura:attribute name="vfHost" type="String" />
+
+    <!-- The Visualforce page to send data to -->
+    <iframe aura:id="vfFrame" src="{!'https://' + v.vfHost + '/apex/SampleVF'}" onload="{!c.sendToVF}"/>
+</aura:component>
