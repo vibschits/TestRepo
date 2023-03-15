@@ -5,7 +5,7 @@ public list<Account> accountList{get;set;}
 public AccountAll(){
  accountList = [select Id,name,Rating,industry from account limit 50];
  // This is sample 
- 
+ // raise pull request.
 }
 
 }
